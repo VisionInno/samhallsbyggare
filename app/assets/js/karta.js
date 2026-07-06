@@ -20,9 +20,11 @@ window.KARTA = (function () {
 
   // Vektorbaskarta (OpenFreeMap via MapLibre GL). Faller tillbaka till OSM-raster.
   let basemapOk = false;
+  let glLayer = null;
   try {
     if (window.maplibregl && L.maplibreGL) {
-      L.maplibreGL({ style: C.BASEMAP_STYLE, attribution: "" }).addTo(map);
+      glLayer = L.maplibreGL({ style: C.BASEMAP_STYLE, attribution: "" });
+      glLayer.addTo(map);
       basemapOk = true;
     }
   } catch (e) { console.warn("Vektorbaskartan kunde inte laddas:", e); }
@@ -247,7 +249,17 @@ window.KARTA = (function () {
   }
   window.addEventListener("resize", nudgeSize);
   window.addEventListener("load", () => setTimeout(nudgeSize, 100));
-  [300, 800, 1600, 3000].forEach(ms => setTimeout(nudgeSize, ms));
+  [300, 800, 1600, 3000, 6000, 10000].forEach(ms => setTimeout(nudgeSize, ms));
+
+  // Nudga även när GL-kartan själv är klar (style laddad resp. alla tiles ritade)
+  // — det är först DÅ en repaint garanterat visar kartbilden.
+  (function hookGl(tries) {
+    const m = glLayer && glLayer.getMaplibreMap && glLayer.getMaplibreMap();
+    if (!m) { if ((tries || 0) < 50) setTimeout(() => hookGl((tries || 0) + 1), 200); return; }
+    m.on("load", nudgeSize);
+    m.once("idle", nudgeSize);
+    m.on("styledata", nudgeSize);
+  })(0);
 
   return { map, setPoint, getKustLevel: () => kustLayerId };
 })();
