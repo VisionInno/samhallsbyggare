@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kartverktyget — Samhällsbyggarkartan</title>
+<meta name="description" content="Sök en adress eller klicka i kartan och få en samlad platsrapport på öppna svenska geodata.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230E5B63'/><path d='M7 21c3-6 6-2 9-7s6-3 9-6' stroke='%23F7F4EE' stroke-width='2.4' fill='none' stroke-linecap='round'/><circle cx='21' cy='20' r='3.4' fill='%23C8722C'/></svg>">
+</head>
+<body class="tool-body">
+
+<header class="tool-header">
+  <a class="logo" href="/">
+    <svg width="28" height="28" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#C8722C"/><path d="M7 21c3-6 6-2 9-7s6-3 9-6" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="21" cy="20" r="3.4" fill="#0E5B63"/></svg>
+    <span class="t">Samhällsbyggarkartan<small>öppna geodata · inga nycklar</small></span>
+  </a>
+
+  <div class="searchbox">
+    <svg class="search-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="search-input" type="text" placeholder="Sök adress eller plats i Sverige …" autocomplete="off" spellcheck="false">
+    <div id="search-results" class="search-results"></div>
+  </div>
+
+  <div class="header-actions">
+    <button class="hbtn" id="btn-locate" title="Zooma till min position">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
+      Min position
+    </button>
+    <a class="hbtn" href="/datakallor/">Datakällor</a>
+  </div>
+</header>
+
+<div class="tool-main">
+  <aside class="layer-panel" id="layer-panel">
+    <div class="layer-panel-head">
+      <h2>Kartlager</h2>
+      <p>Direkt från myndigheternas öppna tjänster.</p>
+    </div>
+    <div id="layer-groups"><!-- byggs av karta.js --></div>
+    <div class="panel-foot">
+      Lagren hämtas live från respektive källa och kan vara långsamma vid första visning.
+      Vägledande screening — ej beslutsunderlag.
+    </div>
+  </aside>
+
+  <button class="layers-toggle" id="layers-toggle">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg>
+    Lager
+  </button>
+
+  <div id="map" role="application" aria-label="Karta över Sverige"></div>
+
+  <div class="map-welcome" id="map-welcome">
+    <span>👋 <b>Sök en adress</b> eller <b>klicka i kartan</b> för att skapa en platsrapport</span>
+  </div>
+
+  <aside class="report-panel" id="report-panel" aria-label="Platsrapport">
+    <button class="report-close" id="report-close" title="Stäng rapporten">✕</button>
+    <div class="report-head">
+      <div class="addr" id="report-addr">Plats</div>
+      <div class="coords" id="report-coords"></div>
+      <div class="report-actions">
+        <button class="btn btn-outline btn-small" id="btn-print">🖨 Skriv ut</button>
+        <button class="btn btn-outline btn-small" id="btn-share">🔗 Kopiera länk</button>
+      </div>
+    </div>
+    <div class="report-scroll">
+      <div class="risk-overview" id="risk-overview"></div>
+      <div id="report-sections"></div>
+      <div class="report-disclaimer">
+        <b>Att läsa rapporten rätt:</b> detta är en automatisk sammanställning av öppna data för
+        tidig screening. "Ingen känd träff" betyder inte att risk saknas — och en träff betyder
+        att platsen förtjänar en riktig utredning, inte att den är obyggbar. Fastighetsgränser
+        och officiella adressuppgifter kräver Lantmäteriet och ingår inte.
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.0.22/leaflet-maplibre-gl.js"></script>
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/karta.js"></script>
+<script src="/assets/js/analys.js"></script>
+</body>
+</html>

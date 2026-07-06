@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Så byggdes den — Samhällsbyggarkartan</title>
+<meta name="description" content="Hur Samhällsbyggarkartan byggdes på en dag med Claude Code och öppna svenska geodata.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230E5B63'/><path d='M7 21c3-6 6-2 9-7s6-3 9-6' stroke='%23F7F4EE' stroke-width='2.4' fill='none' stroke-linecap='round'/><circle cx='21' cy='20' r='3.4' fill='%23C8722C'/></svg>">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="/">
+      <svg width="30" height="30" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#0E5B63"/><path d="M7 21c3-6 6-2 9-7s6-3 9-6" stroke="#F7F4EE" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="21" cy="20" r="3.4" fill="#C8722C"/></svg>
+      Samhällsbyggarkartan
+    </a>
+    <nav class="site-nav">
+      <a href="/datakallor/">Datakällorna</a>
+      <a href="/om/">Så byggdes den</a>
+      <a class="btn btn-primary btn-small" href="/verktyg/">Öppna kartverktyget</a>
+    </nav>
+  </div>
+</header>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Bakom kulisserna</span>
+      <h2>Byggd på en dag. På riktigt.</h2>
+      <p>Samhällsbyggarkartan är ett experiment med en enkel fråga: <b>hur långt kommer man
+      idag med öppna data och AI-assisterad utveckling?</b> Svaret visade sig vara: längre än de
+      flesta tror.</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>Verktyget</h3>
+        <p>Hela sajten är byggd i dialog med <a href="https://claude.com/claude-code" rel="noopener">Claude Code</a> —
+        Anthropics AI-verktyg för utveckling. Människan beskrev vad som skulle byggas och fattade besluten;
+        AI:n skrev koden, verifierade datakällorna och satte upp driften i Azure. Ingen i teamet är programmerare.</p>
+      </div>
+      <div class="card">
+        <h3>Datat</h3>
+        <p>Nio öppna källor från svenska myndigheter och OpenStreetMap-ekosystemet, utan en enda API-nyckel.
+        Kartlagren hämtas direkt från källornas egna tjänster — samma data som proffsens GIS-system använder.
+        Se <a href="/datakallor/">hela listan</a>.</p>
+      </div>
+      <div class="card">
+        <h3>Tekniken</h3>
+        <p>Medvetet enkel: ren HTML, CSS och JavaScript utan byggprocess. Leaflet och MapLibre GL för kartan,
+        Azure Static Web Apps (gratisnivån!) för driften, GitHub Actions för automatisk deploy vid varje ändring.
+        Den enda "backend" som finns är en minimal vidarebefordran för de myndighetstjänster som inte tillåter
+        anrop direkt från webbläsaren.</p>
+      </div>
+      <div class="card">
+        <h3>Koden är öppen</h3>
+        <p>Allt ligger på GitHub under MIT-licens. Läs, låna, förbättra — eller använd den som mall för
+        din kommuns eller ditt bolags egen version.</p>
+        <p style="margin-top:14px"><a class="btn btn-outline btn-small" href="https://github.com/VisionInno/samhallsbyggare" rel="noopener">VisionInno/samhallsbyggare →</a></p>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top:64px">
+      <span class="kicker">Varför?</span>
+      <h2>Poängen för samhällsbyggare</h2>
+      <p>Sveriges myndigheter har gjort ett fantastiskt jobb med att öppna sina geodata.
+      Men datat gör ingen nytta förrän det landar i händerna på dem som fattar besluten —
+      exploatörer, planerare, byggare, mäklare, kommuner. Tröskeln är inte längre pengar
+      eller teknik. Den här sajten byggdes på en dag. Vad skulle din organisation kunna
+      bygga på en vecka?</p>
+      <p><a class="btn btn-primary" href="/verktyg/">Testa kartverktyget →</a></p>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <h4>Samhällsbyggarkartan</h4>
+      <p>En demonstration av öppna svenska geodata, byggd med Claude Code.
+      Ett sidoprojekt från <a href="https://projektledarpodden.se" style="display:inline">Projektledarpodden</a>.</p>
+    </div>
+    <div>
+      <h4>Sajten</h4>
+      <a href="/verktyg/">Kartverktyget</a>
+      <a href="/datakallor/">Datakällorna</a>
+      <a href="/om/">Så byggdes den</a>
+    </div>
+    <div>
+      <h4>Källkod</h4>
+      <a href="https://github.com/VisionInno/samhallsbyggare" rel="noopener">GitHub</a>
+    </div>
+  </div>
+  <div class="wrap"><div class="footer-note">Vägledande screening — ej beslutsunderlag. Data © respektive källa.</div></div>
+</footer>
+
+</body>
+</html>

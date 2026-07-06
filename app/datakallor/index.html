@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Datakällorna — Samhällsbyggarkartan</title>
+<meta name="description" content="Alla öppna svenska geodatakällor som driver Samhällsbyggarkartan — utan API-nycklar. Endpoints, licenser och exempel du kan testa själv.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230E5B63'/><path d='M7 21c3-6 6-2 9-7s6-3 9-6' stroke='%23F7F4EE' stroke-width='2.4' fill='none' stroke-linecap='round'/><circle cx='21' cy='20' r='3.4' fill='%23C8722C'/></svg>">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="/">
+      <svg width="30" height="30" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#0E5B63"/><path d="M7 21c3-6 6-2 9-7s6-3 9-6" stroke="#F7F4EE" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="21" cy="20" r="3.4" fill="#C8722C"/></svg>
+      Samhällsbyggarkartan
+    </a>
+    <nav class="site-nav">
+      <a href="/datakallor/">Datakällorna</a>
+      <a href="/om/">Så byggdes den</a>
+      <a class="btn btn-primary btn-small" href="/verktyg/">Öppna kartverktyget</a>
+    </nav>
+  </div>
+</header>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Öppna data</span>
+      <h2>Källorna som driver kartan</h2>
+      <p>Varje lager hämtas direkt från källan — inga nycklar, inga konton, ingen registrering.
+      Endpointsen nedan kan du klistra in i en webbläsare eller <code style="background:#EEE;padding:2px 6px;border-radius:4px">curl</code> och testa själv.
+      Verifierade 2026-07-06.</p>
+    </div>
+
+    <div class="grid grid-2">
+
+      <div class="card src-card">
+        <div class="src-top"><h3>MSB — översvämning</h3><span class="badge">Öppen tjänst</span></div>
+        <p class="src-what">Översvämningskarteringar för vattendrag (100-/200-årsflöde, beräknat högsta flöde) och kustöversvämning vid olika havsnivåer.</p>
+        <p class="src-why">Det snabbaste sättet att undvika de dyraste felen: bygga där vattnet vill vara.</p>
+        <code>https://gisapp.msb.se/arcgis/services/Oversvamningskarteringar/
+  karteringar/MapServer/WmsServer?request=GetCapabilities</code>
+        <div class="src-links"><a href="https://www.msb.se/oversvamningsportalen" rel="noopener">Översvämningsportalen →</a></div>
+      </div>
+
+      <div class="card src-card">
+        <div class="src-top"><h3>SGU — geologi</h3><span class="badge">CC0</span></div>
+        <p class="src-what">Jordarter, markens genomsläpplighet, berggrund och brunnar som WMS-tjänster.</p>
+        <p class="src-why">Lera eller berg? Infiltrerbar mark eller inte? Tidiga signaler för grundläggning, schakt och dagvatten — innan geoteknikern bokas.</p>
+        <code>https://resource.sgu.se/service/wms/130/
+  jordarter-25-100-tusen?request=GetCapabilities&service=WMS</code>
+        <div class="src-links"><a href="https://www.sgu.se/produkter-och-tjanster/geologiska-data/" rel="noopener">SGU:s geologiska data →</a></div>
+      </div>
+
+      <div class="card src-card">
+        <div class="src-top"><h3>SCB — statistik</h3><span class="badge">CC0</span></div>
+        <p class="src-what">Befolkning per kilometerruta, DeSO-/RegSO-områden och tätorter som WMS/WFS + hela Statistikdatabasen via PxWeb-API.</p>
+        <p class="src-why">Marknadsunderlag på riktigt: hur många bor här, i vilka åldrar, och hur ser området ut?</p>
+        <code>https://geodata.scb.se/geoserver/stat/wfs
+  ?service=WFS&request=GetCapabilities</code>
+        <div class="src-links"><a href="https://www.scb.se/vara-tjanster/oppna-data/" rel="noopener">SCB öppna data →</a></div>
+      </div>
+
+      <div class="card src-card">
+        <div class="src-top"><h3>Riksantikvarieämbetet</h3><span class="badge">Öppna data</span></div>
+        <p class="src-what">Fornlämningar och kulturhistoriska lämningar ur Kulturmiljöregistret som WMS — med JSON-svar på punktfrågor.</p>
+        <p class="src-why">Kulturmiljö är det klassiska "sent upptäckta problemet". En träff här = kontakta länsstyrelsen tidigt.</p>
+        <code>https://pub.raa.se/visning/lamningar_v1/wms
+  ?request=GetCapabilities&service=WMS</code>
+        <div class="src-links"><a href="https://www.raa.se/hitta-information/oppna-data/" rel="noopener">RAÄ öppna data →</a> · <a href="https://app.raa.se/open/fornsok/" rel="noopener">Fornsök →</a></div>
+      </div>
+
+      <div class="card src-card">
+        <div class="src-top"><h3>Naturvårdsverket</h3><span class="badge">Öppna data</span></div>
+        <p class="src-what">Naturvårdsregistret: nationalparker, naturreservat, vattenskyddsområden och fler skydd enligt miljöbalken, som WMS/WFS.</p>
+        <p class="src-why">Skyddad natur sätter hårda ramar för vad som går att bygga — och var det är olämpligt att ens försöka.</p>
+        <code>https://geodata.naturvardsverket.se/naturvardsregistret/wms
+  ?request=GetCapabilities&service=WMS</code>
+        <div class="src-links"><a href="https://www.naturvardsverket.se/verktyg-och-tjanster/kartor-och-karttjanster/" rel="noopener">NVV karttjänster →</a></div>
+      </div>
+
+      <div class="card src-card">
+        <div class="src-top"><h3>Länsstyrelserna — EBH</h3><span class="badge">Öppna data</span></div>
+        <p class="src-what">Potentiellt och konstaterat förorenade områden ur EBH-stödet, som WMS och ArcGIS-tjänst.</p>
+        <p class="src-why">Förorenad mark är en av de mest kostnadsdrivande överraskningarna. En indikation här ändrar utredningsordningen direkt.</p>
+        <code>https://ext-geodata-nationella.lansstyrelsen.se/arcgis/rest/
+  services/LST/lst_wms_miljodata/MapServer</code>
+        <div class="src-links"><a href="https://ext-geodatakatalog.lansstyrelsen.se/GeodataKatalogen/" rel="noopener">Geodatakatalogen →</a></div>
+      </div>
+
+      <div class="card src-card">
+        <div class="src-top"><h3>SMHI</h3><span class="badge">Öppna data</span></div>
+        <p class="src-what">Punktprognoser (temperatur, vind, nederbörd) via öppet JSON-API + historiska observationer, hydrologi och luftmiljö.</p>
+        <p class="src-why">Väder- och klimatkontext för platsen — och på sikt underlag för dagvatten- och solresonemang.</p>
+        <code>https://opendata-download-metfcst.smhi.se/api/category/pmp3g/
+  version/2/geotype/point/lon/18.07/lat/59.33/data.json</code>
+        <div class="src-links"><a href="https://www.smhi.se/data" rel="noopener">SMHI öppna data →</a></div>
+      </div>
+
+      <div class="card src-card">
+        <div class="src-top"><h3>OpenStreetMap</h3><span class="badge gold">ODbL</span></div>
+        <p class="src-what">Geokodning (Nominatim), närhetsanalys av service (Overpass) och all basdata i kartan.</p>
+        <p class="src-why">Den friktionsfria ryggraden: adresser, hållplatser, skolor, vård, butiker — världens största öppna geodatabas.</p>
+        <code>https://overpass-api.de/api/interpreter?data=[out:json];
+  node(around:800,59.33,18.07)[amenity=school];out;</code>
+        <div class="src-links"><a href="https://www.openstreetmap.org/copyright" rel="noopener">OSM →</a> · <a href="https://operations.osmfoundation.org/policies/nominatim/" rel="noopener">Nominatims policy →</a></div>
+      </div>
+
+      <div class="card src-card">
+        <div class="src-top"><h3>OpenFreeMap</h3><span class="badge gold">Öppen tjänst</span></div>
+        <p class="src-what">Snabb vektorbaskarta (MapLibre GL-stilar) byggd på OpenStreetMap — utan nycklar, konton eller kvoter.</p>
+        <p class="src-why">Det som gör att kartan känns modern och snabb, helt gratis.</p>
+        <code>https://tiles.openfreemap.org/styles/positron</code>
+        <div class="src-links"><a href="https://openfreemap.org" rel="noopener">openfreemap.org →</a></div>
+      </div>
+
+    </div>
+
+    <div class="section-head" style="margin-top:64px">
+      <span class="kicker">Ärlighetshörnan</span>
+      <h2>Det som <em>inte</em> ingår — och varför</h2>
+      <p>Fastighetsgränser, officiella adresser, ortofoto och nationell höjdmodell kommer från
+      <b>Lantmäteriet</b>. Licensen är fri (CC0), men åtkomsten kräver konto och behörighet via Geotorget —
+      så de ingår inte i den här friktionsfria versionen. Samma sak gäller t.ex. Boverkets
+      energideklarations-API (avtal) och Skogsstyrelsens rasterdata (konto). Arkitekturen är byggd
+      så att de kan kopplas på i fas 2 utan att något behöver byggas om.</p>
+      <p><b>Två tjänster utan CORS-stöd?</b> Vissa myndighetstjänster tillåter inte anrop direkt från
+      webbläsare. Då går anropet via en minimal vidarebefordran i Azure (öppen källkod, ingen nyckel,
+      bara en GET till en godkänd lista av myndighetsvärdar). Datat är fortfarande helt öppet.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <h4>Samhällsbyggarkartan</h4>
+      <p>En demonstration av öppna svenska geodata, byggd med Claude Code.</p>
+    </div>
+    <div>
+      <h4>Sajten</h4>
+      <a href="/verktyg/">Kartverktyget</a>
+      <a href="/datakallor/">Datakällorna</a>
+      <a href="/om/">Så byggdes den</a>
+    </div>
+    <div>
+      <h4>Källkod</h4>
+      <a href="https://github.com/VisionInno/samhallsbyggare" rel="noopener">GitHub</a>
+    </div>
+  </div>
+  <div class="wrap"><div class="footer-note">Vägledande screening — ej beslutsunderlag. Data © respektive källa.</div></div>
+</footer>
+
+</body>
+</html>

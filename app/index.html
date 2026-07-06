@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Samhällsbyggarkartan — hela platsbilden på öppna geodata</title>
+<meta name="description" content="Skriv in en adress och få en samlad platsbild: översvämningsrisk, jordarter, fornlämningar, skyddad natur, statistik och service. Byggd på öppna svenska geodata — utan en enda API-nyckel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230E5B63'/><path d='M7 21c3-6 6-2 9-7s6-3 9-6' stroke='%23F7F4EE' stroke-width='2.4' fill='none' stroke-linecap='round'/><circle cx='21' cy='20' r='3.4' fill='%23C8722C'/></svg>">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="/">
+      <svg width="30" height="30" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#0E5B63"/><path d="M7 21c3-6 6-2 9-7s6-3 9-6" stroke="#F7F4EE" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="21" cy="20" r="3.4" fill="#C8722C"/></svg>
+      Samhällsbyggarkartan
+    </a>
+    <nav class="site-nav">
+      <a href="/datakallor/">Datakällorna</a>
+      <a href="/om/">Så byggdes den</a>
+      <a class="btn btn-primary btn-small" href="/verktyg/">Öppna kartverktyget</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <svg class="hero-art" viewBox="0 0 1200 620" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.5">
+      <path d="M-50 480 C 150 420, 260 520, 430 470 S 760 380, 940 450 S 1180 520, 1300 460"/>
+      <path d="M-50 430 C 160 370, 280 470, 450 420 S 780 330, 960 400 S 1190 470, 1300 410"/>
+      <path d="M-50 380 C 170 320, 300 420, 470 370 S 800 280, 980 350 S 1200 420, 1300 360"/>
+      <path d="M-50 330 C 180 270, 320 370, 490 320 S 820 230, 1000 300 S 1210 370, 1300 310"/>
+      <path d="M-50 280 C 190 220, 340 320, 510 270 S 840 180, 1020 250 S 1220 320, 1300 260"/>
+    </g>
+    <g fill="rgba(255,255,255,.20)">
+      <circle cx="250" cy="180" r="3"/><circle cx="640" cy="120" r="3"/><circle cx="920" cy="210" r="3"/>
+      <circle cx="440" cy="90" r="2.2"/><circle cx="1080" cy="120" r="2.2"/><circle cx="130" cy="110" r="2.2"/>
+    </g>
+    <g stroke="rgba(200,114,44,.55)" stroke-width="2" fill="none">
+      <circle cx="820" cy="330" r="26"/><circle cx="820" cy="330" r="44" opacity=".5"/><circle cx="820" cy="330" r="62" opacity=".25"/>
+    </g>
+    <circle cx="820" cy="330" r="7" fill="#C8722C"/>
+  </svg>
+  <div class="wrap">
+    <span class="hero-eyebrow">Öppna svenska geodata · Inga API-nycklar · Ingen inloggning</span>
+    <h1>Hela platsbilden.<br>På en minut.</h1>
+    <p class="lead">Skriv in en adress eller klicka i kartan — och få översvämningsrisk, jordarter, fornlämningar, skyddad natur, förorenad mark, befolkning och service. Samlat, begripligt och byggt helt på öppna data från svenska myndigheter.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="/verktyg/">Öppna kartverktyget →</a>
+      <a class="btn btn-ghost" href="/datakallor/">Se datakällorna</a>
+    </div>
+  </div>
+</section>
+
+<div class="stat-strip">
+  <div class="wrap">
+    <div class="stat"><b>9</b><span>öppna datakällor</span></div>
+    <div class="stat"><b>0</b><span>API-nycklar</span></div>
+    <div class="stat"><b>15+</b><span>kartlager</span></div>
+    <div class="stat"><b>1 dag</b><span>att bygga med Claude Code</span></div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">För dig som bygger samhället</span>
+      <h2>Tidig platsanalys utan friktion</h2>
+      <p>De dyraste misstagen i bygg- och exploateringsprojekt upptäcks ofta sent. Det mesta hade gått att se tidigt — i data som redan är öppen och gratis.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg></div>
+        <h3>Ny tomt på gång?</h3>
+        <p>Innan du räknar på affären: ligger tomten i översvämningszon? Är det lera eller berg? Finns fornlämningar eller misstänkt förorenad mark i närheten? Se det på en minut.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20l-5.447-2.724A1 1 0 0 1 3 16.382V5.618a1 1 0 0 1 1.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0 0 21 18.382V7.618a1 1 0 0 0-.553-.894L15 4m0 13V4M9 7l6-3"/></svg></div>
+        <h3>Tidigt planskede</h3>
+        <p>Riskscreening av flera platser i pipeline: jämför lägen, sortera bort uppenbara felcase och prioritera var geoteknik och miljöutredning gör mest nytta.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <h3>Möte om en timme?</h3>
+        <p>Ta fram en utskriftsvänlig platsrapport med källhänvisningar direkt — områdesstatistik, gångavstånd till service och riskbild i samma dokument.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Lagren</span>
+      <h2>Myndighetsdata som pratar med varandra</h2>
+      <p>Varje lager är hämtat direkt från källan — och kan tändas, släckas och kombineras i kartan.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card"><h3>💧 Översvämning</h3><p>MSB:s karteringar för 100-årsflöde, 200-årsflöde och beräknat högsta flöde — plus kustöversvämning vid stigande havsnivåer.</p><span class="tag">MSB</span></div>
+      <div class="card"><h3>🪨 Mark &amp; geologi</h3><p>Jordarter, markens genomsläpplighet, berggrund och brunnar. Tidiga signaler om grundläggning, schakt och dagvatten.</p><span class="tag">SGU</span></div>
+      <div class="card"><h3>🏺 Kulturmiljö</h3><p>Fornlämningar och kulturhistoriska lämningar — det klassiska "sent upptäckta problemet" i lov- och planskede.</p><span class="tag">Riksantikvarieämbetet</span></div>
+      <div class="card"><h3>🌿 Skyddad natur</h3><p>Nationalparker, naturreservat, vattenskyddsområden och andra skydd enligt miljöbalken.</p><span class="tag">Naturvårdsverket</span></div>
+      <div class="card"><h3>⚠️ Förorenade områden</h3><p>Potentiellt förorenade områden ur länsstyrelsernas EBH-stöd — en av de mest kostnadsdrivande överraskningarna.</p><span class="tag">Länsstyrelserna</span></div>
+      <div class="card"><h3>👥 Människorna</h3><p>Befolkning per kilometerruta och DeSO-områden — underlag för marknad, service och målgrupp.</p><span class="tag">SCB</span></div>
+      <div class="card"><h3>🚏 Vardagsnära service</h3><p>Hållplatser, skolor, förskolor, vård, livsmedel, lekplatser och laddstationer med avstånd från din punkt.</p><span class="tag">OpenStreetMap</span></div>
+      <div class="card"><h3>🌤 Väder &amp; klimat</h3><p>Aktuell prognos för platsen som kontext — temperatur, vind och nederbörd.</p><span class="tag">SMHI</span></div>
+      <div class="card"><h3>🗺 Basdata</h3><p>Snabb vektorkarta och geokodning av adresser — helt utan nycklar.</p><span class="tag">OpenStreetMap · OpenFreeMap</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Så funkar det</span>
+      <h2>Tre steg till platsbild</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><h3>Sök eller klicka</h3><p>Skriv en adress eller klicka var som helst i Sverige. Ingen inloggning, inget konto.</p></div>
+      <div class="step"><h3>Lagren hämtas live</h3><p>Kartan frågar myndigheternas öppna tjänster direkt — samma data som proffsens GIS-system använder.</p></div>
+      <div class="step"><h3>Läs &amp; skriv ut rapporten</h3><p>En samlad platsrapport med riskindikationer, statistik och källhänvisningar. Skriv ut eller dela med en länk.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="wrap">
+    <div class="built-banner">
+      <div>
+        <span class="kicker" style="color:#C8722C">Demon i demon</span>
+        <h2>Byggd på en dag — med Claude Code</h2>
+        <p>Den här sajten är själv beviset på poängen: med öppna data och AI-assisterad utveckling
+        kan en liten organisation bygga verktyg som tidigare krävde upphandling, licenser och månader.
+        Hela källkoden är öppen — läs, låna och bygg vidare.</p>
+        <a class="btn btn-primary" href="https://github.com/VisionInno/samhallsbyggare" rel="noopener">Se koden på GitHub →</a>
+      </div>
+      <div class="mono">
+<span class="d"># en prompt, ungefär så här:</span><br>
+&gt; Bygg en karttjänst för samhällsbyggare<br>
+&nbsp;&nbsp;på öppna svenska geodata.<br>
+&nbsp;&nbsp;Inga API-nycklar. Gör den vacker.<br><br>
+<span class="c">✓ 9 källor verifierade</span><br>
+<span class="c">✓ 15+ kartlager kopplade</span><br>
+<span class="c">✓ platsrapport med riskindikator</span><br>
+<span class="c">✓ deployad till Azure</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <h4>Samhällsbyggarkartan</h4>
+      <p>En demonstration av öppna svenska geodata, byggd med Claude Code.
+      Ett sidoprojekt från <a href="https://projektledarpodden.se" style="display:inline">Projektledarpodden</a>.</p>
+    </div>
+    <div>
+      <h4>Sajten</h4>
+      <a href="/verktyg/">Kartverktyget</a>
+      <a href="/datakallor/">Datakällorna</a>
+      <a href="/om/">Så byggdes den</a>
+    </div>
+    <div>
+      <h4>Källkod</h4>
+      <a href="https://github.com/VisionInno/samhallsbyggare" rel="noopener">GitHub</a>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="footer-note">
+      Kartan och rapporterna är vägledande screening i tidigt skede — inte juridisk information eller beslutsunderlag.
+      Fastighetsgränser och officiella adresser tillhandahålls av Lantmäteriet och ingår inte i denna friktionsfria version.
+      Data © respektive källa: MSB, SGU, SCB, RAÄ, Naturvårdsverket, Länsstyrelserna, SMHI, © OpenStreetMaps bidragsgivare.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

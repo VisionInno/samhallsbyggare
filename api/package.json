@@ -1,0 +1,10 @@
+{
+  "name": "samhallsbyggare-api",
+  "version": "1.0.0",
+  "description": "Minimal CORS-brygga för myndighetstjänster utan CORS-headers. Ingen nyckel, ingen hemlighet — bara GET till en godkänd lista av värdar.",
+  "main": "src/functions/*.js",
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "@azure/functions": "^4.5.0"
+  }
+}
