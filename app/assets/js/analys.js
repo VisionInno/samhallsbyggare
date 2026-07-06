@@ -9,7 +9,8 @@ window.ANALYS = (function () {
   // ---------- småverktyg ----------
   const $ = id => document.getElementById(id);
   const esc = s => String(s == null ? "" : s)
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
   function toMerc(lat, lng) {
     const x = lng * 20037508.34 / 180;
@@ -36,13 +37,13 @@ window.ANALYS = (function () {
       "&INFO_FORMAT=" + encodeURIComponent(fmt || "application/json") + "&FEATURE_COUNT=15";
   }
   async function gfiJson(base, layers, lat, lng, halfM, bufPx) {
-    const r = await C.smartFetch(gfiUrl(base, layers, lat, lng, halfM, bufPx), 20000);
+    const r = await C.smartFetch(gfiUrl(base, layers, lat, lng, halfM, bufPx), 20000, runSignal());
     if (!r.ok) throw new Error("HTTP " + r.status);
     return r.json();
   }
   // ArcGIS-WMS (t.ex. Naturvårdsverket) svarar med esri_wms-XML i stället för JSON.
   async function gfiEsri(base, layers, lat, lng, halfM, bufPx) {
-    const r = await C.smartFetch(gfiUrl(base, layers, lat, lng, halfM, bufPx, "text/xml"), 20000);
+    const r = await C.smartFetch(gfiUrl(base, layers, lat, lng, halfM, bufPx, "text/xml"), 20000, runSignal());
     if (!r.ok) throw new Error("HTTP " + r.status);
     const doc = new DOMParser().parseFromString(await r.text(), "text/xml");
     return [...doc.querySelectorAll("FIELDS")].map(f => {
@@ -61,7 +62,7 @@ window.ANALYS = (function () {
       "&tolerance=" + (tolPx || 2) +
       "&mapExtent=" + [p.x - h, p.y - h, p.x + h, p.y + h].map(v => v.toFixed(1)).join(",") +
       "&imageDisplay=400,400,96&returnGeometry=false";
-    const r = await C.smartFetch(url, 20000);
+    const r = await C.smartFetch(url, 20000, runSignal());
     if (!r.ok) throw new Error("HTTP " + r.status);
     return r.json();
   }
@@ -73,7 +74,7 @@ window.ANALYS = (function () {
       encodeURIComponent(p.x.toFixed(1) + "," + p.y.toFixed(1)) +
       "&geometryType=esriGeometryPoint&inSR=3857&spatialRel=esriSpatialRelIntersects" +
       "&returnGeometry=false&returnCountOnly=true";
-    const r = await C.smartFetch(url, 20000);
+    const r = await C.smartFetch(url, 20000, runSignal());
     if (!r.ok) throw new Error("HTTP " + r.status);
     const j = await r.json();
     if (j.error) throw new Error("ArcGIS-fel " + j.error.code);
@@ -113,7 +114,7 @@ window.ANALYS = (function () {
 
   function sectionShell(s) {
     return '<div class="rsec loading" id="' + s.id + '">' +
-      '<div class="rsec-head"><span class="sico">' + s.icon + "</span>" + s.title +
+      '<div class="rsec-head"><span class="sico" aria-hidden="true">' + s.icon + "</span>" + s.title +
       '<span class="src-note">' + s.src + "</span></div>" +
       '<div class="rsec-body"></div></div>';
   }
@@ -128,13 +129,19 @@ window.ANALYS = (function () {
 
   // ---------- huvudflödet ----------
   let runId = 0;
+  let runCtrl = null;
+  const runSignal = () => runCtrl && runCtrl.signal;
 
   async function run(lat, lng, label) {
     const my = ++runId;
+    if (runCtrl) runCtrl.abort();       // avbryt förra körningens anrop på nätet
+    runCtrl = new AbortController();
     const panel = $("report-panel");
     panel.classList.add("open");
 
-    $("report-addr").textContent = label || "Hämtar adress …";
+    const addrEl = $("report-addr");
+    addrEl.textContent = label || "Hämtar adress …";
+    addrEl.focus({ preventScroll: true });
     $("report-coords").textContent = lat.toFixed(5) + "° N, " + lng.toFixed(5) + "° Ö (WGS84)";
     RISK_KEYS.forEach(rk => delete riskState[rk.key]);
     setRisk("_init", "na", "");   // rita chips i vänteläge
@@ -157,7 +164,7 @@ window.ANALYS = (function () {
     if (label) return;
     try {
       const r = await C.smartFetch(C.NOMINATIM + "/reverse?lat=" + lat + "&lon=" + lng +
-        "&format=jsonv2&zoom=18&addressdetails=1&accept-language=sv", 12000);
+        "&format=jsonv2&zoom=18&addressdetails=1&accept-language=sv", 12000, runSignal());
       const j = await r.json();
       if (!fresh(my)) return;
       const a = j.address || {};
@@ -174,7 +181,7 @@ window.ANALYS = (function () {
   async function secVader(my, lat, lng) {
     const id = "sec-vader";
     try {
-      const r = await C.smartFetch(C.SMHI_POINT(lng, lat), 15000);
+      const r = await C.smartFetch(C.SMHI_POINT(lng, lat), 15000, runSignal());
       if (!r.ok) throw new Error("HTTP " + r.status);
       const j = await r.json();
       if (!fresh(my)) return;
@@ -223,7 +230,7 @@ window.ANALYS = (function () {
       }
     } else {
       setRisk("flod", "na", "okänt");
-      html += row("Vattendragsöversvämning", "kunde inte hämtas", "warn");
+      html += row("Vattendragsöversvämning", "källan svarar inte just nu", "warn");
     }
     if (kustRes.status === "fulfilled") {
       if (kustRes.value) {
@@ -235,10 +242,11 @@ window.ANALYS = (function () {
       }
     } else {
       setRisk("kust", "na", "okänt");
-      html += row("Kustöversvämning", "kunde inte hämtas", "warn");
+      html += row("Kustöversvämning", "källan svarar inte just nu", "warn");
     }
     html += '<p class="note">MSB:s karteringar täcker utpekade vattendrag och kuststräckor — ' +
-      "avsaknad av träff kan bero på att området inte är karterat. Nivå väljs i lagerpanelen.</p>";
+      "avsaknad av träff kan bero på att området inte är karterat. Nivå väljs i lagerpanelen. " +
+      "Svarar en källa inte: klicka på punkten igen för ett nytt försök.</p>";
     body(id).innerHTML = html;
   }
 
@@ -277,7 +285,7 @@ window.ANALYS = (function () {
       } else if (res.status === "fulfilled") {
         html += row(j.name, "Ingen data på punkten", "");
       } else {
-        html += row(j.name, "kunde inte hämtas", "warn");
+        html += row(j.name, "källan svarar inte just nu", "warn");
       }
     });
     html += '<p class="note">Tänd SGU-lagren i panelen för kartbild och teckenförklaring. ' +
@@ -306,7 +314,7 @@ window.ANALYS = (function () {
     } catch (e) {
       if (!fresh(my)) return;
       setRisk("natur", "na", "okänt");
-      html += row("Skyddad natur", "kunde inte hämtas", "warn");
+      html += row("Skyddad natur", "källan svarar inte just nu", "warn");
     }
     // Förorenade områden (LST, identify via proxy — servern kan vara nere)
     try {
@@ -370,8 +378,8 @@ window.ANALYS = (function () {
       encodeURIComponent(t) + "&bbox=" + bb + "&srsName=EPSG:3857&outputFormat=application/json&maxFeatures=3";
     try {
       const [ruta, deso] = await Promise.allSettled([
-        C.smartFetch(wfs("stat:befolkning_1km_2024"), 20000).then(r => r.json()),
-        C.smartFetch(wfs("stat:DeSO_2025"), 20000).then(r => r.json())
+        C.smartFetch(wfs("stat:befolkning_1km_2024"), 20000, runSignal()).then(r => r.json()),
+        C.smartFetch(wfs("stat:DeSO_2025"), 20000, runSignal()).then(r => r.json())
       ]);
       if (!fresh(my)) return;
       done(id);
@@ -402,7 +410,8 @@ window.ANALYS = (function () {
         const kn = dp.kommunnamn || dp.kommun || "";
         if (code) html += row("DeSO-område", esc(code) + (kn ? " · " + esc(kn) : ""));
       }
-      html += '<p class="note">SCB:s öppna geodata (CC0). Rutstatistik är områdesdata — inte uppgifter om enskilda fastigheter.</p>';
+      html += '<p class="note">SCB:s öppna geodata (CC0). DeSO = SCB:s demografiska statistikområden (ca 700–2 700 invånare). ' +
+        'Rutstatistik är områdesdata — inte uppgifter om enskilda fastigheter.</p>';
       body(id).innerHTML = html;
     } catch (e) { if (fresh(my)) fail(id, "SCB:s tjänst kunde inte nås."); }
   }
@@ -418,7 +427,7 @@ window.ANALYS = (function () {
     q += 'way(around:800,' + lat + "," + lng + ')["leisure"="playground"];';
     q += ");out center 80;";
     try {
-      const r = await C.smartFetch(C.OVERPASS + "?data=" + encodeURIComponent(q), 30000);
+      const r = await C.smartFetch(C.OVERPASS + "?data=" + encodeURIComponent(q), 30000, runSignal());
       if (!r.ok) throw new Error("HTTP " + r.status);
       const j = await r.json();
       if (!fresh(my)) return;
@@ -467,12 +476,18 @@ window.ANALYS = (function () {
 
   input.addEventListener("input", () => {
     clearTimeout(debounceT);
+    lastHits = [];                      // gamla träffar gäller inte ny text
     const q = input.value.trim();
-    if (q.length < 3) { results.classList.remove("open"); return; }
+    if (q.length < 2) { results.classList.remove("open"); return; }
     debounceT = setTimeout(() => doSearch(q), 900);
   });
   input.addEventListener("keydown", e => {
-    if (e.key === "Enter" && lastHits.length) pick(lastHits[0]);
+    if (e.key === "Enter") {
+      if (lastHits.length) { pick(lastHits[0]); return; }
+      clearTimeout(debounceT);          // Enter = sök direkt, vänta inte på debounce
+      const q = input.value.trim();
+      if (q.length >= 2) doSearch(q);
+    }
     if (e.key === "Escape") results.classList.remove("open");
   });
   document.addEventListener("click", e => {
@@ -506,13 +521,16 @@ window.ANALYS = (function () {
 
   // ---------- knappar ----------
   $("report-close").addEventListener("click", () => $("report-panel").classList.remove("open"));
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") $("report-panel").classList.remove("open");
+  });
   $("btn-print").addEventListener("click", () => window.print());
   $("btn-share").addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(location.href);
-      const b = $("btn-share"); const t = b.textContent;
+      const b = $("btn-share"); const t = b.innerHTML;
       b.textContent = "✓ Kopierad!";
-      setTimeout(() => { b.textContent = t; }, 1600);
+      setTimeout(() => { b.innerHTML = t; }, 1600);
     } catch (e) { alert("Kopiera adressfältets länk manuellt."); }
   });
 

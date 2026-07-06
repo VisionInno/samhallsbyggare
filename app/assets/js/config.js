@@ -8,6 +8,9 @@ window.CFG = (function () {
 
   // Värdar som saknar CORS-headers → datafrågor går via vår lilla proxy.
   // (WMS-BILDER berörs inte — Leaflet laddar dem som <img> utan CORS.)
+  // OBS: håll listan i synk med ALLOWED_HOSTS i api/src/functions/geo.js.
+  // maps3.sgu.se ligger medvetet UTANFÖR — den skickar CORS-headers och
+  // anropas direkt (verifierat 2026-07-06).
   const PROXY_HOSTS = [
     "resource.sgu.se",
     "opendata-download-metfcst.smhi.se",
@@ -25,13 +28,22 @@ window.CFG = (function () {
     return url;
   }
 
-  /** fetch med timeout + proxy vid behov. Returnerar Response. */
-  async function smartFetch(url, ms) {
+  /** fetch med timeout + proxy vid behov. Returnerar Response.
+      Tredje argumentet: yttre AbortSignal (t.ex. "användaren valde ny punkt"). */
+  async function smartFetch(url, ms, signal) {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), ms || 18000);
+    const onAbort = () => ctrl.abort();
+    if (signal) {
+      if (signal.aborted) ctrl.abort();
+      else signal.addEventListener("abort", onAbort);
+    }
     try {
       return await fetch(viaProxy(url), { signal: ctrl.signal });
-    } finally { clearTimeout(t); }
+    } finally {
+      clearTimeout(t);
+      if (signal) signal.removeEventListener("abort", onAbort);
+    }
   }
 
   // ---------- Bas ----------

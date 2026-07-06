@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/style.css?v=4">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230E5B63'/><path d='M7 21c3-6 6-2 9-7s6-3 9-6' stroke='%23F7F4EE' stroke-width='2.4' fill='none' stroke-linecap='round'/><circle cx='21' cy='20' r='3.4' fill='%23C8722C'/></svg>">
 </head>
 <body>
@@ -20,7 +20,7 @@
       Samhällsbyggarkartan
     </a>
     <nav class="site-nav">
-      <a href="/datakallor/">Datakällorna</a>
+      <a href="/datakallor/" aria-current="page">Datakällorna</a>
       <a href="/om/">Så byggdes den</a>
       <a class="btn btn-primary btn-small" href="/verktyg/">Öppna kartverktyget</a>
     </nav>
@@ -31,7 +31,7 @@
   <div class="wrap">
     <div class="section-head">
       <span class="kicker">Öppna data</span>
-      <h2>Källorna som driver kartan</h2>
+      <h1 style="font-size: clamp(1.5rem, 3vw, 2.2rem)">Källorna som driver kartan</h1>
       <p>Varje lager hämtas direkt från källan — inga nycklar, inga konton, ingen registrering.
       Endpointsen nedan kan du klistra in i en webbläsare eller <code style="background:#EEE;padding:2px 6px;border-radius:4px">curl</code> och testa själv.
       Verifierade 2026-07-06.</p>
@@ -97,8 +97,8 @@
         <div class="src-top"><h3>SMHI</h3><span class="badge">Öppna data</span></div>
         <p class="src-what">Punktprognoser (temperatur, vind, nederbörd) via öppet JSON-API + historiska observationer, hydrologi och luftmiljö.</p>
         <p class="src-why">Väder- och klimatkontext för platsen — och på sikt underlag för dagvatten- och solresonemang.</p>
-        <code>https://opendata-download-metfcst.smhi.se/api/category/pmp3g/
-  version/2/geotype/point/lon/18.07/lat/59.33/data.json</code>
+        <code>https://opendata-download-metfcst.smhi.se/api/category/snow1g/
+  version/1/geotype/point/lon/18.07/lat/59.33/data.json</code>
         <div class="src-links"><a href="https://www.smhi.se/data" rel="noopener">SMHI öppna data →</a></div>
       </div>
 

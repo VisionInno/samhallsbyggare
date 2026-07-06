@@ -92,7 +92,7 @@ window.KARTA = (function () {
           '<span class="lsrc">' + def.src + "</span>" + noteHtml + "</span></label>" +
           (def.kustSelect ? kustSelectHtml() : "") +
           '<input type="range" min="10" max="100" value="' + Math.round((def.opacity || 0.65) * 100) +
-          '" data-op="' + def.id + '" title="Genomskinlighet" style="display:none">' +
+          '" data-op="' + def.id + '" title="Genomskinlighet" aria-label="Genomskinlighet för ' + def.title + '" style="display:none">' +
           (def.legendLayer ? '<div class="layer-legend" data-legend="' + def.id + '" style="display:none"></div>' : "");
 
         details.appendChild(row);
@@ -119,7 +119,7 @@ window.KARTA = (function () {
   }
 
   function kustSelectHtml() {
-    return '<select class="kust-select" data-kust>' +
+    return '<select class="kust-select" data-kust aria-label="Havsnivå för kustöversvämning">' +
       C.KUST_LEVELS.map(k =>
         '<option value="' + k.id + '"' + (k.id === 9 ? " selected" : "") + ">" + k.label + "</option>"
       ).join("") + "</select>";
@@ -196,26 +196,52 @@ window.KARTA = (function () {
 
     if (!opts.noFly) {
       const z = Math.max(map.getZoom(), 14);
-      map.flyTo([lat, lng], z, { duration: 0.8 });
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        map.setView([lat, lng], z);
+      } else {
+        map.flyTo([lat, lng], z, { duration: 0.8 });
+      }
     }
     location.hash = "p=" + lat.toFixed(5) + "," + lng.toFixed(5);
     if (window.ANALYS) window.ANALYS.run(lat, lng, opts.label);
   }
 
-  map.on("click", e => setPoint(e.latlng.lat, e.latlng.lng));
-
-  // ---------- mobil lagerpanel ----------
+  // ---------- lagerpanel (mobil: overlay) ----------
   const panel = document.getElementById("layer-panel");
   const ltoggle = document.getElementById("layers-toggle");
-  if (ltoggle) ltoggle.addEventListener("click", () => panel.classList.toggle("open"));
-  map.on("click", () => panel.classList.remove("open"));
+  const pclose = document.getElementById("panel-close");
+  function setPanelOpen(open) {
+    panel.classList.toggle("open", open);
+    if (ltoggle) ltoggle.setAttribute("aria-expanded", String(open));
+  }
+  if (ltoggle) ltoggle.addEventListener("click", () => setPanelOpen(!panel.classList.contains("open")));
+  if (pclose) pclose.addEventListener("click", () => setPanelOpen(false));
+
+  map.on("click", e => {
+    // På mobil är panelen ett överlägg: ett kartklick med öppen panel ska
+    // BARA stänga panelen — inte samtidigt starta en platsrapport.
+    const overlay = window.matchMedia("(max-width: 900px)").matches;
+    if (overlay && panel.classList.contains("open")) { setPanelOpen(false); return; }
+    setPanelOpen(false);
+    setPoint(e.latlng.lat, e.latlng.lng);
+  });
 
   // ---------- min position ----------
-  document.getElementById("btn-locate").addEventListener("click", () => {
+  const locBtn = document.getElementById("btn-locate");
+  const locHtml = locBtn.innerHTML;
+  locBtn.addEventListener("click", () => {
     if (!navigator.geolocation) return alert("Din webbläsare saknar platstjänst.");
+    locBtn.disabled = true;
+    locBtn.textContent = "Hämtar position …";
+    const restore = () => { locBtn.disabled = false; locBtn.innerHTML = locHtml; };
     navigator.geolocation.getCurrentPosition(
-      pos => setPoint(pos.coords.latitude, pos.coords.longitude),
-      () => alert("Kunde inte hämta din position."),
+      pos => { restore(); setPoint(pos.coords.latitude, pos.coords.longitude); },
+      err => {
+        restore();
+        alert(err && err.code === 1
+          ? "Du behöver tillåta platsdelning i webbläsaren för att använda Min position."
+          : "Kunde inte hämta positionen — sök adressen i stället.");
+      },
       { enableHighAccuracy: true, timeout: 10000 }
     );
   });

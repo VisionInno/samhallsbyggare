@@ -8,15 +8,15 @@
   --panel: #FFFFFF;
   --ink: #14262C;
   --ink-soft: #3D5158;
-  --muted: #6B7C82;
+  --muted: #5A6B71;  /* mörkare än ursprungliga #6B7C82 — klarar WCAG AA på vit/sand */
   --brand: #0E5B63;
   --brand-deep: #093C42;
   --brand-ghost: #E3EEEF;
   --accent: #C8722C;
   --accent-soft: #F6E8DA;
-  --ok: #2E7D4F;
+  --ok: #276B44;
   --ok-soft: #E3F0E8;
-  --warn: #B07818;
+  --warn: #8F6110;
   --warn-soft: #F7EDD8;
   --risk: #B04234;
   --risk-soft: #F6E3E0;
@@ -31,6 +31,15 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+
+/* synligt tangentbordsfokus (mus-klick påverkas inte) */
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.tool-header :focus-visible { outline-color: #fff; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
 body {
   margin: 0;
   font-family: var(--font-ui);
@@ -59,8 +68,8 @@ img { max-width: 100%; }
   font-family: var(--font-ui);
 }
 .btn:hover { transform: translateY(-1px); }
-.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 6px 18px rgba(200,114,44,.35); }
-.btn-primary:hover { background: #B4661F; }
+.btn-primary { background: #B4661F; color: #fff; box-shadow: 0 6px 18px rgba(180,102,31,.35); }
+.btn-primary:hover { background: #9E5717; }
 .btn-ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.4); }
 .btn-ghost:hover { border-color: #fff; background: rgba(255,255,255,.08); }
 .btn-outline { background: var(--panel); color: var(--brand); border-color: var(--brand); }
@@ -205,6 +214,7 @@ img { max-width: 100%; }
 }
 .searchbox input::placeholder { color: rgba(255,255,255,.55); }
 .searchbox input:focus { background: rgba(255,255,255,.22); }
+.searchbox input:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .searchbox .search-ico { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); opacity: .7; }
 .search-results {
   position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--panel);
@@ -236,9 +246,16 @@ img { max-width: 100%; }
   width: 308px; flex: 0 0 auto; background: var(--panel); border-right: 1px solid var(--line);
   overflow-y: auto; z-index: 900; display: flex; flex-direction: column;
 }
-.layer-panel-head { padding: 16px 18px 10px; }
+.layer-panel-head { padding: 16px 18px 10px; position: relative; }
 .layer-panel-head h2 { font-size: 1.05rem; margin: 0; }
 .layer-panel-head p { font-size: .78rem; color: var(--muted); margin: 4px 0 0; }
+.panel-close {
+  display: none; position: absolute; top: 10px; right: 10px; width: 40px; height: 40px;
+  border-radius: 50%; border: none; background: var(--bg); cursor: pointer;
+  font-size: 15px; color: var(--ink-soft);
+}
+.panel-close:hover { background: var(--line); }
+@media (max-width: 900px) { .panel-close { display: block; } }
 .layer-group { border-top: 1px solid var(--line); }
 .layer-group > summary {
   list-style: none; cursor: pointer; padding: 12px 18px; font-weight: 600; font-size: .88rem;
@@ -249,8 +266,8 @@ img { max-width: 100%; }
 .layer-group[open] > summary .chev { transform: rotate(180deg); }
 .layer-group .dot { width: 10px; height: 10px; border-radius: 3px; }
 .layer-row { padding: 6px 18px 10px 36px; }
-.layer-row label { display: flex; align-items: flex-start; gap: 10px; font-size: .85rem; cursor: pointer; }
-.layer-row input[type="checkbox"] { margin-top: 3px; accent-color: var(--brand); width: 15px; height: 15px; }
+.layer-row label { display: flex; align-items: flex-start; gap: 10px; font-size: .85rem; cursor: pointer; padding: 6px 0; }
+.layer-row input[type="checkbox"] { margin-top: 3px; accent-color: var(--brand); width: 17px; height: 17px; }
 .layer-row .lname { flex: 1; line-height: 1.35; }
 .layer-row .lsrc { display: block; font-size: .72rem; color: var(--muted); }
 .layer-row input[type="range"] { width: 100%; margin: 6px 0 0; accent-color: var(--brand); height: 14px; }
@@ -267,10 +284,10 @@ img { max-width: 100%; }
 }
 .report-panel.open { transform: translateX(0); }
 .report-head { padding: 18px 20px 14px; background: var(--panel); border-bottom: 1px solid var(--line); }
-.report-head .addr { font-family: var(--font-display); font-size: 1.18rem; font-weight: 600; line-height: 1.25; }
+.report-head .addr { font-family: var(--font-display); font-size: 1.18rem; font-weight: 600; line-height: 1.25; margin: 0; }
 .report-head .coords { font-size: .76rem; color: var(--muted); margin-top: 4px; }
 .report-head .report-actions { display: flex; gap: 8px; margin-top: 12px; }
-.report-close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--bg); cursor: pointer; font-size: 15px; color: var(--ink-soft); }
+.report-close { position: absolute; top: 8px; right: 8px; width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--bg); cursor: pointer; font-size: 15px; color: var(--ink-soft); }
 .report-close:hover { background: var(--line); }
 .report-scroll { overflow-y: auto; flex: 1; padding: 16px 20px 28px; }
 
@@ -337,17 +354,33 @@ img { max-width: 100%; }
   .tool-header .logo small { display: none; }
   .tool-header .logo span.t { display: none; }
   .searchbox { max-width: none; }
+  .map-welcome { top: 62px; }  /* under Lager-knappen så de inte överlappar */
 }
+@media (max-width: 700px) {
+  .site-header .wrap { height: auto; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; gap: 12px; }
+  .site-nav { gap: 14px; }
+  .site-nav a:not(.btn) { display: none; }  /* på små skärmar: bara CTA-knappen */
+}
+
+/* markera aktuell sida i navigationen */
+.site-nav a[aria-current="page"] { color: var(--brand); font-weight: 600; }
 
 /* mobilknapp för lager */
 .layers-toggle { display: none; }
 @media (max-width: 900px) {
   .layers-toggle {
-    display: flex; position: absolute; left: 12px; top: 12px; z-index: 850;
+    display: flex; position: absolute; left: 12px; top: 12px; z-index: 950; /* över panelen (900) */
     background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow);
-    border-radius: 999px; padding: 9px 16px; font-size: .85rem; font-weight: 600; gap: 7px;
+    border-radius: 999px; padding: 11px 18px; font-size: .85rem; font-weight: 600; gap: 7px;
     cursor: pointer; align-items: center; font-family: var(--font-ui); color: var(--ink);
   }
+}
+
+/* ---------- nedtonad rörelse ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .rsec.loading .rsec-body::after { animation: none; }
+  .layer-panel, .report-panel, .btn, .card { transition: none; }
 }
 
 /* ---------- print (platsrapporten) ---------- */
