@@ -30,6 +30,15 @@
 - MSB-sektionen: Promise.all → allSettled så att en långsam kusttjänst inte blockerar
 - SMHI verifierad live: 19 °C, vind, molnighet ✓. RAÄ verifierad: Stadslager-träff i Sthlm ✓
 
+## 2026-07-06 — Pass 5 (Claude Code): användarguide som PowerPoint
+
+- `docs/Samhallsbyggarkartan-guide.pptx` — 5 sidor, hands-on ("så klickar du"):
+  titel, första platsrapporten i 3 steg, rapportens 7 sektioner, kartlagren
+  (inkl. havsnivå-rullistan), dela/skriv ut + tolkningsvarningen.
+  Byggd med python-pptx i sajtens designspråk (petrol/sand/ockra, Georgia/Segoe UI).
+  Generatorskript sparat i scratchpad (engångs); alla sidor visuellt granskade via
+  PowerPoint COM-export till PNG.
+
 ## 2026-07-06 — Pass 4 (Claude Code): moduluppdelning av analys.js + actions-låsning
 
 - **analys.js (539 rader) uppdelad i fyra moduler** enligt 200-radersprincipen (arkitektur-
