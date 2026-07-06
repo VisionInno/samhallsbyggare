@@ -249,16 +249,21 @@ window.KARTA = (function () {
   }
   window.addEventListener("resize", nudgeSize);
   window.addEventListener("load", () => setTimeout(nudgeSize, 100));
-  [300, 800, 1600, 3000, 6000, 10000].forEach(ms => setTimeout(nudgeSize, ms));
 
-  // Nudga även när GL-kartan själv är klar (style laddad resp. alla tiles ritade)
-  // — det är först DÅ en repaint garanterat visar kartbilden.
+  // Tiles kan komma sent vid kall cache — knuffa var 1,5 s under första halvminuten.
+  // (Repaint är gratis när inget ändrats, så detta är ofarligt.)
+  let nudgeCount = 0;
+  const nudgeTimer = setInterval(() => {
+    nudgeSize();
+    if (++nudgeCount >= 20) clearInterval(nudgeTimer);
+  }, 1500);
+
+  // Nudga även när GL-kartan själv säger att den är klar.
   (function hookGl(tries) {
     const m = glLayer && glLayer.getMaplibreMap && glLayer.getMaplibreMap();
     if (!m) { if ((tries || 0) < 50) setTimeout(() => hookGl((tries || 0) + 1), 200); return; }
     m.on("load", nudgeSize);
     m.once("idle", nudgeSize);
-    m.on("styledata", nudgeSize);
   })(0);
 
   return { map, setPoint, getKustLevel: () => kustLayerId };
