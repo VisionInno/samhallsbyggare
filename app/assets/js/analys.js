@@ -66,6 +66,20 @@ window.ANALYS = (function () {
     return r.json();
   }
 
+  // Kusttjänstens identify tar ~30 s hos MSB — lagrets query-API svarar på ~1 s.
+  async function arcgisQueryHit(restBase, layerId, lat, lng) {
+    const p = toMerc(lat, lng);
+    const url = restBase + "/" + layerId + "/query?f=json&geometry=" +
+      encodeURIComponent(p.x.toFixed(1) + "," + p.y.toFixed(1)) +
+      "&geometryType=esriGeometryPoint&inSR=3857&spatialRel=esriSpatialRelIntersects" +
+      "&returnGeometry=false&returnCountOnly=true";
+    const r = await C.smartFetch(url, 20000);
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const j = await r.json();
+    if (j.error) throw new Error("ArcGIS-fel " + j.error.code);
+    return (j.count || 0) > 0;
+  }
+
   // ---------- rapportpanelens skelett ----------
   const SECTIONS = [
     { id: "sec-vader",  icon: "🌤", title: "Väder just nu",            src: "SMHI" },
@@ -192,7 +206,7 @@ window.ANALYS = (function () {
     const kustLabel = (C.KUST_LEVELS.find(k => k.id === kustId) || {}).label || "";
     const [kartRes, kustRes] = await Promise.allSettled([
       arcgisIdentify(C.MSB_KART_REST, "2,3,4,5,15", lat, lng, 2, 600),
-      arcgisIdentify(C.MSB_KUST_REST, String(kustId), lat, lng, 2, 600)
+      arcgisQueryHit(C.MSB_KUST_REST, kustId, lat, lng)
     ]);
     if (!fresh(my)) return;
     done(id);
@@ -212,7 +226,7 @@ window.ANALYS = (function () {
       html += row("Vattendragsöversvämning", "kunde inte hämtas", "warn");
     }
     if (kustRes.status === "fulfilled") {
-      if ((kustRes.value.results || []).length) {
+      if (kustRes.value) {
         setRisk("kust", "risk", "träff vid " + kustLabel.replace(" havsnivå", ""));
         html += row("Kustöversvämning (" + esc(kustLabel) + ")", "TRÄFF", "risk");
       } else {

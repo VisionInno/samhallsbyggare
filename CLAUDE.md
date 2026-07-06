@@ -69,7 +69,7 @@ värdar slentrianmässigt. Inga nycklar, inga hemligheter — den vidarebefordra
 
 ## Verifierade endpoints (2026-07-06)
 
-- MSB översvämning (ArcGIS): `https://gisapp.msb.se/arcgis/rest/services/Oversvamningskarteringar/{karteringar|kustoversvamning|hotkartor}/MapServer` — WMS: samma bas + `/WmsServer`. Karteringar-lager: 2=100-år, 3=100-år klimat, 4=200-år klimat, 5=BHF, 15=1000-år. Kust: lager-id = nivå i dm − 1 (0=0,1 m … 29=3,0 m)
+- MSB översvämning (ArcGIS): `https://gisapp.msb.se/arcgis/rest/services/Oversvamningskarteringar/{karteringar|kustoversvamning|hotkartor}/MapServer` — WMS: samma bas + `/WmsServer`. Karteringar-lager: 2=100-år, 3=100-år klimat, 4=200-år klimat, 5=BHF, 15=1000-år. Kust: lager-id = nivå i dm − 1 (0=0,1 m … 29=3,0 m). **OBS: kusttjänstens `/identify` tar ~30 s (timar ut) — använd lagrets `/{id}/query?returnCountOnly=true` i stället (~1 s), se `arcgisQueryHit()` i analys.js. Karteringar-tjänstens identify är snabb.**
 - SGU punktfrågor (GetFeatureInfo, JSON): `https://maps3.sgu.se/geoserver/wms` — lager
   `jord:SE.GOV.SGU.JORD.GRUNDLAGER.25K`, `jord:SE.GOV.SGU.JORD.GRUNDLAGER.GENOMSLAPPLIGHET.25K`,
   `berg:SE.GOV.SGU.BERG.GEOLOGISK_ENHET.YTA.50K`, `grundvatten:SE.GOV.SGU.BRUNNAR.250K`.

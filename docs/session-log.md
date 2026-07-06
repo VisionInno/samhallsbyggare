@@ -30,15 +30,27 @@
 - MSB-sektionen: Promise.all → allSettled så att en långsam kusttjänst inte blockerar
 - SMHI verifierad live: 19 °C, vind, molnighet ✓. RAÄ verifierad: Stadslager-träff i Sthlm ✓
 
-### Kvar att göra efter denna session (nästa pass i Claude Code)
-- [ ] **Först:** committa och pusha de ocommittade dokumentuppdateringarna från 2026-07-06
-      (CLAUDE.md, docs/session-log.md — bara dokumentation, ingen kod)
+## 2026-07-06 — Pass 2 (Claude Code): kust-fix + dokumentcommit
+
+### Klart
+- Committade/pushade dokumentuppdateringarna från förra passet (punkt 1 på listan)
+- **MSB kust-identify löst på riktigt:** uppmätt att `/identify` mot kustoversvamning-tjänsten
+  tar konsekvent ~30 s (kodens timeout var 20 s → nästan alltid "kunde inte hämtas").
+  Bytte till lagrets query-API (`/{lagerid}/query?returnCountOnly=true`) som svarar på ~1 s.
+  Ny hjälpfunktion `arcgisQueryHit()` i analys.js; cache-bust analys.js → v7.
+  Verifierat i Chrome (localhost:3060): Skeppsbrokajen ger TRÄFF vid +1,0 m på ~1 s,
+  nätverksloggen bekräftar att query-anropet används (HTTP 200).
+- EBH-servern (ext-geodata-nationella.lansstyrelsen.se) testad igen: fortfarande helt nere
+  (TCP-anslutning etableras inte ens, testat med 60 s timeout)
+- Port 3060 registrerad för samhällsbyggare i ~/.claude/profile.md (lokal testserver)
+
+### Kvar att göra (nästa pass)
 - [ ] **Subdomän:** lägg CNAME `samhallsbyggare` → `purple-bush-015972603.7.azurestaticapps.net`
       hos DNS-leverantören (namnservrar: ns1/ns2.dnshost.net) och lägg sedan till custom domain
       `samhallsbyggare.projektledarpodden.se` i Azure-portalen (SWA `samhallsbyggare` → Custom domains)
+      — kräver Mattias inloggning hos DNS-leverantören
 - [ ] **Redirect:** när projektledarpodden.se flyttats till sin SWA — lägg route
       `{ "route": "/samhallsbyggare", "redirect": "https://samhallsbyggare.projektledarpodden.se", "statusCode": 301 }`
       i projektledarpodden-repots staticwebapp.config.json
-- [ ] Verifiera EBH-lagret när Länsstyrelsens server svarar igen (ext-geodata-nationella var nere hela dagen)
-- [ ] Kust-identify hos MSB är ibland långsam — ev. höj timeout eller cacha
+- [ ] Verifiera EBH-lagret när Länsstyrelsens server svarar igen (fortfarande nere 2026-07-06 em)
 - [ ] Idé: byt Nominatim-sök till egen instans vid skarp trafik (policy 1 req/s)
