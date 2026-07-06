@@ -233,5 +233,13 @@ window.KARTA = (function () {
   buildPanel();
   restoreFromHash();
 
+  // Säkerställ att kartan (och GL-baskartan) får rätt storlek när
+  // flex-layouten och typsnitten är klara — annars kan kartan bli vit.
+  function nudgeSize() { map.invalidateSize(); }
+  window.addEventListener("resize", nudgeSize);
+  window.addEventListener("load", () => setTimeout(nudgeSize, 100));
+  setTimeout(nudgeSize, 300);
+  setTimeout(nudgeSize, 1200);
+
   return { map, setPoint, getKustLevel: () => kustLayerId };
 })();

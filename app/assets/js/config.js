@@ -145,8 +145,9 @@ window.CFG = (function () {
   // ---------- Analys-endpoints ----------
   const NOMINATIM = "https://nominatim.openstreetmap.org";
   const OVERPASS = "https://overpass-api.de/api/interpreter";
+  // OBS: SMHI bytte 2026 till SNOW-modellen (snow1g v1). Gamla pmp3g är nedlagd.
   const SMHI_POINT = (lon, lat) =>
-    "https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/" +
+    "https://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon/" +
     lon.toFixed(4) + "/lat/" + lat.toFixed(4) + "/data.json";
 
   // Kategorier för närhetsanalysen (Overpass)

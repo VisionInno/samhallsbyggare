@@ -146,12 +146,6 @@ window.ANALYS = (function () {
     } catch (e) { if (fresh(my)) $("report-addr").textContent = "Vald punkt"; }
   }
 
-  const WSYMB = { 1:"klart",2:"mest klart",3:"halvklart",4:"halvklart",5:"molnigt",6:"mulet",7:"dimma",
-    8:"regnskurar",9:"regnskurar",10:"kraftiga regnskurar",11:"åska",12:"snöblandade skurar",
-    13:"snöblandade skurar",14:"kraftiga snöblandade skurar",15:"snöbyar",16:"snöbyar",17:"kraftiga snöbyar",
-    18:"regn",19:"regn",20:"kraftigt regn",21:"åska",22:"snöblandat regn",23:"snöblandat regn",
-    24:"kraftigt snöblandat regn",25:"snöfall",26:"snöfall",27:"ymnigt snöfall" };
-
   async function secVader(my, lat, lng) {
     const id = "sec-vader";
     try {
@@ -159,17 +153,25 @@ window.ANALYS = (function () {
       if (!r.ok) throw new Error("HTTP " + r.status);
       const j = await r.json();
       if (!fresh(my)) return;
+      // Nya SNOW-formatet: timeSeries[i] = { time, data: { air_temperature, wind_speed, ... } }
       const ts = j.timeSeries && j.timeSeries[0];
-      if (!ts) throw new Error("tomt svar");
-      const get = n => { const p = ts.parameters.find(p => p.name === n); return p ? p.values[0] : null; };
-      const t = get("t"), ws = get("ws"), sym = get("Wsymb2"), nb = get("pmedian");
+      if (!ts || !ts.data) throw new Error("tomt svar");
+      const d = ts.data;
+      const num = v => (v == null || isNaN(v)) ? null : Number(v);
+      const t = num(d.air_temperature), ws = num(d.wind_speed),
+            gust = num(d.wind_speed_of_gust), rh = num(d.relative_humidity);
+      let cloud = num(d.cloud_area_fraction);
+      if (cloud != null) cloud = Math.round(cloud <= 1 ? cloud * 100 : cloud);
+      const precipKey = Object.keys(d).find(k => /precipitation/.test(k) && /amount|mean|rate/.test(k));
+      const nb = precipKey ? num(d[precipKey]) : null;
       done(id);
       body(id).innerHTML =
-        row("Prognos", esc(WSYMB[sym] || "—")) +
-        row("Temperatur", (t != null ? t.toFixed(0) + " °C" : "—")) +
-        row("Vind", (ws != null ? ws.toFixed(0) + " m/s" : "—")) +
-        (nb ? row("Nederbörd", nb.toFixed(1).replace(".", ",") + " mm/h") : "") +
-        '<p class="note">SMHI:s punktprognos för närmaste prognospunkt.</p>';
+        (t != null ? row("Temperatur", t.toFixed(0) + " °C") : "") +
+        (ws != null ? row("Vind", ws.toFixed(0) + (gust != null ? " m/s (byar " + gust.toFixed(0) + ")" : " m/s")) : "") +
+        (cloud != null ? row("Molnighet", cloud + " %") : "") +
+        (rh != null ? row("Luftfuktighet", Math.round(rh) + " %") : "") +
+        (nb != null && nb > 0 ? row("Nederbörd", nb.toFixed(1).replace(".", ",") + " mm/h") : "") +
+        '<p class="note">SMHI:s punktprognos (SNOW-modellen) för närmaste timme.</p>';
     } catch (e) { if (fresh(my)) fail(id, "SMHI-prognosen kunde inte hämtas."); }
   }
 

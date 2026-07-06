@@ -16,6 +16,11 @@
 - Konventioner följda från projektledarpodden-projektet: egen resursgrupp (`samhallsbyggare-rg`),
   SWA Free i West Europe, GitHub VisionInno, auto-deploy via Actions.
 
+### Buggfixar efter första deployen (samma dag)
+- Vit karta: flex-layouten var inte klar när Leaflet/GL initierades → `invalidateSize()`-knuffar tillagda i karta.js
+- SMHI: gamla API:t (pmp3g v2) nedlagt 2026-03-31 → bytt till SNOW-modellen (snow1g v1) med nytt svarsformat
+- Verifierat live: adress-sök, RAÄ-lämningar (JSON), MSB-identify, proxyn /api/geo → SGU (200 OK)
+
 ### Kvar att göra efter denna session
 - [ ] Verifiera EBH-lagret när Länsstyrelsens server svarar igen
 - [ ] DNS: CNAME `samhallsbyggare` → SWA:ns default-host (görs hos dnshost.net-panelen)
