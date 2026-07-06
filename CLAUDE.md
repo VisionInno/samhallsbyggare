@@ -16,8 +16,9 @@ jordarter/berggrund/brunnar (SGU), fornlämningar (RAÄ), skyddad natur (NVV), f
 
 - **Publik URL (mål):** samhallsbyggare.projektledarpodden.se (+ redirect från projektledarpodden.se/samhallsbyggare när huvuddomänen flyttats till Azure)
 - **Git/källkod:** GitHub `VisionInno/samhallsbyggare` (publikt), branch `main`
-- **Hosting:** Azure Static Web App i resursgrupp `samhallsbyggare-rg` (West Europe, Free).
-  Push till `main` → GitHub Actions bygger och deployar automatiskt.
+- **Hosting:** Azure Static Web App `samhallsbyggare` i resursgrupp `samhallsbyggare-rg` (Free,
+  functions i West Europe). Push till `main` → GitHub Actions bygger och deployar automatiskt.
+- **Live-URL (default):** https://purple-bush-015972603.7.azurestaticapps.net
 
 ## Struktur
 
@@ -106,6 +107,9 @@ värdar slentrianmässigt. Inga nycklar, inga hemligheter — den vidarebefordra
 
 ## Arbetssätt för Claude Code
 
+- **Börja varje arbetspass med `git status`** — committa/pusha ev. ocommittade ändringar först.
+  Avsluta varje pass med commit + push (push till `main` deployar automatiskt till Azure).
+- Kolla "Kvar att göra" i `docs/session-log.md` för nästa steg
 - Testa i webbläsare efter ändringar (`npx serve app`), särskilt kartverktyget
 - Nya datakällor: lägg till i `config.js` + dokumentera på `datakallor/index.html` + i den här filen
 - Uppdatera `docs/session-log.md` efter varje arbetspass
