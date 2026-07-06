@@ -69,14 +69,18 @@ värdar slentrianmässigt. Inga nycklar, inga hemligheter — den vidarebefordra
 ## Verifierade endpoints (2026-07-06)
 
 - MSB översvämning (ArcGIS): `https://gisapp.msb.se/arcgis/rest/services/Oversvamningskarteringar/{karteringar|kustoversvamning|hotkartor}/MapServer` — WMS: samma bas + `/WmsServer`. Karteringar-lager: 2=100-år, 3=100-år klimat, 4=200-år klimat, 5=BHF, 15=1000-år. Kust: lager-id = nivå i dm − 1 (0=0,1 m … 29=3,0 m)
-- SGU WMS (GeoServer): `https://resource.sgu.se/service/wms/130/<produkt>` där produkt är
+- SGU punktfrågor (GetFeatureInfo, JSON): `https://maps3.sgu.se/geoserver/wms` — lager
+  `jord:SE.GOV.SGU.JORD.GRUNDLAGER.25K`, `jord:SE.GOV.SGU.JORD.GRUNDLAGER.GENOMSLAPPLIGHET.25K`,
+  `berg:SE.GOV.SGU.BERG.GEOLOGISK_ENHET.YTA.50K`, `grundvatten:SE.GOV.SGU.BRUNNAR.250K`.
+  **OBS: resource.sgu.se stödjer INTE GetFeatureInfo** (returnerar capabilities) — den är bara för tiles/legender.
+- SGU WMS för tiles (GeoServer-fasad): `https://resource.sgu.se/service/wms/130/<produkt>` där produkt är
   `jordarter-25-100-tusen` (lager `jord:SE.GOV.SGU.JORD.GRUNDLAGER.25K`),
   `jordarter-25-100-tusen-genomslapplighet` (lager `SE.GOV.SGU.JORD.GRUNDLAGER.GENOMSLAPPLIGHET.25K`),
   `berggrund-50-250-tusen` (lager `SE.GOV.SGU.BERG.GEOLOGISK_ENHET.YTA.50K`),
   `brunnar` (lager `SE.GOV.SGU.BRUNNAR.250K`)
 - SCB (GeoServer): `https://geodata.scb.se/geoserver/stat/{wms|wfs}` — lager t.ex. `befolkning_1km_2024`, `DeSO_2025`, `Tatorter_2023`
 - RAÄ lämningar: `https://pub.raa.se/visning/lamningar_v1/wms` — lager `fornlamning`, `mojligfornlamning`, `ovrkulthistlamning` m.fl. GetFeatureInfo stödjer `application/json`!
-- NVV skyddad natur: `https://geodata.naturvardsverket.se/naturvardsregistret/wms` — lager `Nationalpark`, `Naturreservat`, `Naturreservat_kommunalt`, `Vattenskyddsomrade` m.fl.
+- NVV skyddad natur: `https://geodata.naturvardsverket.se/naturvardsregistret/wms` — lager `Nationalpark`, `Naturreservat`, `Naturreservat_kommunalt`, `Vattenskyddsomrade` m.fl. **GetFeatureInfo svarar med esri_wms-XML (FIELDS-attribut: NAMN, SKYDDSTYP), inte JSON** — parsas av `gfiEsri()` i analys.js.
 - Länsstyrelsen EBH: `https://ext-geodata-nationella.lansstyrelsen.se/arcgis/rest/services/LST/lst_wms_miljodata/MapServer` (lager 0 = potentiellt förorenade områden). **OBS: servern var nere/långsam vid bygget — hanteras tolerant i koden.**
 - SMHI punktprognos (nya SNOW-modellen, gamla pmp3g nedlagd mars 2026): `https://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon/{lon}/lat/{lat}/data.json` — svarformat: `timeSeries[i].data.air_temperature` osv.
 - Nominatim: `https://nominatim.openstreetmap.org/search` + `/reverse` (max 1 req/s — debounce finns i koden, ändra inte bort den)

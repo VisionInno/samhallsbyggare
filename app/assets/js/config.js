@@ -60,6 +60,16 @@ window.CFG = (function () {
     brunnar: "SE.GOV.SGU.BRUNNAR.250K"
   };
 
+  // SGU:s riktiga GeoServer för punktfrågor (GetFeatureInfo med JSON-svar).
+  // resource.sgu.se är bara en visningsfasad som inte stödjer GetFeatureInfo.
+  const SGU_GFI = "https://maps3.sgu.se/geoserver/wms";
+  const SGU_GFI_LAYERS = {
+    jordarter: "jord:SE.GOV.SGU.JORD.GRUNDLAGER.25K",
+    genomslapplighet: "jord:SE.GOV.SGU.JORD.GRUNDLAGER.GENOMSLAPPLIGHET.25K",
+    berggrund: "berg:SE.GOV.SGU.BERG.GEOLOGISK_ENHET.YTA.50K",
+    brunnar: "grundvatten:SE.GOV.SGU.BRUNNAR.250K"
+  };
+
   const RAA_WMS = "https://pub.raa.se/visning/lamningar_v1/wms";
   const RAA_LAYERS = "fornlamning,mojligfornlamning,ovrkulthistlamning";
 
@@ -167,7 +177,7 @@ window.CFG = (function () {
     BASEMAP_STYLE, BASEMAP_FALLBACK,
     LAYER_GROUPS, KUST_LEVELS,
     MSB_KART_REST, MSB_KUST_REST,
-    SGU_WMS, SGU_LAYERS,
+    SGU_WMS, SGU_LAYERS, SGU_GFI, SGU_GFI_LAYERS,
     RAA_WMS, RAA_LAYERS,
     NVV_WMS, NVV_LAYERS,
     LST_REST,

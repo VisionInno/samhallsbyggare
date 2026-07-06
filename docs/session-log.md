@@ -21,6 +21,15 @@
 - SMHI: gamla API:t (pmp3g v2) nedlagt 2026-03-31 → bytt till SNOW-modellen (snow1g v1) med nytt svarsformat
 - Verifierat live: adress-sök, RAÄ-lämningar (JSON), MSB-identify, proxyn /api/geo → SGU (200 OK)
 
+### Fler fixar under liveverifieringen (samma dag)
+- Vit karta på riktigt löst: tiles kommer sent vid kall cache → intervall-nudge (1,5 s × 20) + GL load/idle-hooks
+- SGU GetFeatureInfo: resource.sgu.se svarar med capabilities på ALLT utom GetMap/caps →
+  bytte punktfrågorna till SGU:s riktiga GeoServer `maps3.sgu.se/geoserver/wms` (upptäckt via
+  deras egen kartvisare-proxy). maps3.sgu.se tillagd i proxy-allowlist.
+- NVV GetFeatureInfo: svarar esri_wms-XML, inte JSON → ny parser `gfiEsri()`
+- MSB-sektionen: Promise.all → allSettled så att en långsam kusttjänst inte blockerar
+- SMHI verifierad live: 19 °C, vind, molnighet ✓. RAÄ verifierad: Stadslager-träff i Sthlm ✓
+
 ### Kvar att göra efter denna session
 - [ ] Verifiera EBH-lagret när Länsstyrelsens server svarar igen
 - [ ] DNS: CNAME `samhallsbyggare` → SWA:ns default-host (görs hos dnshost.net-panelen)

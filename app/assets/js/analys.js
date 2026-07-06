@@ -40,6 +40,17 @@ window.ANALYS = (function () {
     if (!r.ok) throw new Error("HTTP " + r.status);
     return r.json();
   }
+  // ArcGIS-WMS (t.ex. Naturvårdsverket) svarar med esri_wms-XML i stället för JSON.
+  async function gfiEsri(base, layers, lat, lng, halfM, bufPx) {
+    const r = await C.smartFetch(gfiUrl(base, layers, lat, lng, halfM, bufPx, "text/xml"), 20000);
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const doc = new DOMParser().parseFromString(await r.text(), "text/xml");
+    return [...doc.querySelectorAll("FIELDS")].map(f => {
+      const o = {};
+      [...f.attributes].forEach(a => { o[a.name] = a.value; });
+      return o;
+    });
+  }
 
   // ---------- ArcGIS identify ----------
   async function arcgisIdentify(restBase, layerIds, lat, lng, tolPx, extentM) {
@@ -179,18 +190,15 @@ window.ANALYS = (function () {
     const id = "sec-flood";
     const kustId = window.KARTA ? window.KARTA.getKustLevel() : 9;
     const kustLabel = (C.KUST_LEVELS.find(k => k.id === kustId) || {}).label || "";
-    try {
-      const [kart, kust] = await Promise.all([
-        arcgisIdentify(C.MSB_KART_REST, "2,3,4,5,15", lat, lng, 2, 600),
-        arcgisIdentify(C.MSB_KUST_REST, String(kustId), lat, lng, 2, 600)
-      ]);
-      if (!fresh(my)) return;
-      done(id);
-      const hits = (kart.results || []);
-      const names = [...new Set(hits.map(h => h.layerName))];
-      const kustHit = (kust.results || []).length > 0;
-
-      let html = "";
+    const [kartRes, kustRes] = await Promise.allSettled([
+      arcgisIdentify(C.MSB_KART_REST, "2,3,4,5,15", lat, lng, 2, 600),
+      arcgisIdentify(C.MSB_KUST_REST, String(kustId), lat, lng, 2, 600)
+    ]);
+    if (!fresh(my)) return;
+    done(id);
+    let html = "";
+    if (kartRes.status === "fulfilled") {
+      const names = [...new Set((kartRes.value.results || []).map(h => h.layerName))];
       if (names.length) {
         setRisk("flod", "risk", "träff");
         html += row("Vattendragsöversvämning", "TRÄFF", "risk");
@@ -199,21 +207,25 @@ window.ANALYS = (function () {
         setRisk("flod", "ok", "ingen känd");
         html += row("Vattendragsöversvämning", "Ingen känd träff", "ok");
       }
-      if (kustHit) {
+    } else {
+      setRisk("flod", "na", "okänt");
+      html += row("Vattendragsöversvämning", "kunde inte hämtas", "warn");
+    }
+    if (kustRes.status === "fulfilled") {
+      if ((kustRes.value.results || []).length) {
         setRisk("kust", "risk", "träff vid " + kustLabel.replace(" havsnivå", ""));
         html += row("Kustöversvämning (" + esc(kustLabel) + ")", "TRÄFF", "risk");
       } else {
         setRisk("kust", "ok", "ingen vid " + kustLabel.replace(" havsnivå", ""));
         html += row("Kustöversvämning (" + esc(kustLabel) + ")", "Ingen känd träff", "ok");
       }
-      html += '<p class="note">MSB:s karteringar täcker utpekade vattendrag och kuststräckor — ' +
-        "avsaknad av träff kan bero på att området inte är karterat. Nivå väljs i lagerpanelen.</p>";
-      body(id).innerHTML = html;
-    } catch (e) {
-      if (!fresh(my)) return;
-      setRisk("flod", "na", "okänt"); setRisk("kust", "na", "okänt");
-      fail(id, "MSB:s tjänst kunde inte nås.");
+    } else {
+      setRisk("kust", "na", "okänt");
+      html += row("Kustöversvämning", "kunde inte hämtas", "warn");
     }
+    html += '<p class="note">MSB:s karteringar täcker utpekade vattendrag och kuststräckor — ' +
+      "avsaknad av träff kan bero på att området inte är karterat. Nivå väljs i lagerpanelen.</p>";
+    body(id).innerHTML = html;
   }
 
   function pickProps(feature, patterns, max) {
@@ -233,11 +245,11 @@ window.ANALYS = (function () {
   async function secGeo(my, lat, lng) {
     const id = "sec-geo";
     const jobs = [
-      { name: "Jordart (grundlager)", base: C.SGU_WMS.jordarter, layers: C.SGU_LAYERS.jordarter, re: [/jordart/i, /jg\d/i, /beskr/i] },
-      { name: "Genomsläpplighet", base: C.SGU_WMS.genomslapplighet, layers: C.SGU_LAYERS.genomslapplighet, re: [/genoms/i, /klass/i] },
-      { name: "Berggrund", base: C.SGU_WMS.berggrund, layers: C.SGU_LAYERS.berggrund, re: [/bergart/i, /rock/i, /lito/i, /beskr/i] }
+      { name: "Jordart (grundlager)", layers: C.SGU_GFI_LAYERS.jordarter, re: [/jordart/i, /jg\d/i, /beskr/i] },
+      { name: "Genomsläpplighet", layers: C.SGU_GFI_LAYERS.genomslapplighet, re: [/genoms/i, /klass/i] },
+      { name: "Berggrund", layers: C.SGU_GFI_LAYERS.berggrund, re: [/bergart/i, /rock/i, /lito/i, /beskr/i] }
     ];
-    const out = await Promise.allSettled(jobs.map(j => gfiJson(j.base, j.layers, lat, lng, 40)));
+    const out = await Promise.allSettled(jobs.map(j => gfiJson(C.SGU_GFI, j.layers, lat, lng, 40)));
     if (!fresh(my)) return;
     done(id);
     let html = "", any = false;
@@ -262,16 +274,15 @@ window.ANALYS = (function () {
   async function secMiljo(my, lat, lng) {
     const id = "sec-miljo";
     let html = "";
-    // Skyddad natur (NVV, GetFeatureInfo via proxy)
+    // Skyddad natur (NVV, GetFeatureInfo via proxy — esri_wms-XML)
     try {
-      const j = await gfiJson(C.NVV_WMS, C.NVV_LAYERS, lat, lng, 80, 20);
+      const feats = await gfiEsri(C.NVV_WMS, C.NVV_LAYERS, lat, lng, 80, 20);
       if (!fresh(my)) return;
-      const feats = j.features || [];
       if (feats.length) {
         setRisk("natur", "warn", "inom skydd");
         feats.slice(0, 4).forEach(f => {
-          const typ = String(f.id || "").split(".")[0].replace(/_/g, " ") || "Skyddat område";
-          const namn = (f.properties && (f.properties.NAMN || f.properties.namn)) || "";
+          const namn = f.NAMN || f.Namn || f.namn || "";
+          const typ = f.SKYDDSTYP || f.Skyddstyp || f.SKYDDSFORM || "Skyddat område";
           html += row(esc(typ), esc(namn || "träff"), "warn");
         });
       } else {

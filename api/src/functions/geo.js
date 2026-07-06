@@ -13,6 +13,7 @@ const { app } = require("@azure/functions");
 
 const ALLOWED_HOSTS = new Set([
   "resource.sgu.se",
+  "maps3.sgu.se",
   "opendata-download-metfcst.smhi.se",
   "geodata.naturvardsverket.se",
   "ext-geodata-nationella.lansstyrelsen.se",
