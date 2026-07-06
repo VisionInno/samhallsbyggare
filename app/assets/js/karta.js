@@ -235,11 +235,19 @@ window.KARTA = (function () {
 
   // Säkerställ att kartan (och GL-baskartan) får rätt storlek när
   // flex-layouten och typsnitten är klara — annars kan kartan bli vit.
-  function nudgeSize() { map.invalidateSize(); }
+  // OBS: GL-lagret behöver en explicit resize(), invalidateSize räcker inte.
+  function nudgeSize() {
+    map.invalidateSize();
+    Object.values(map._layers).forEach(l => {
+      if (l.getMaplibreMap) {
+        const m = l.getMaplibreMap();
+        if (m) { try { m.resize(); m.triggerRepaint(); } catch (e) { /* ignorera */ } }
+      }
+    });
+  }
   window.addEventListener("resize", nudgeSize);
   window.addEventListener("load", () => setTimeout(nudgeSize, 100));
-  setTimeout(nudgeSize, 300);
-  setTimeout(nudgeSize, 1200);
+  [300, 800, 1600, 3000].forEach(ms => setTimeout(nudgeSize, ms));
 
   return { map, setPoint, getKustLevel: () => kustLayerId };
 })();
