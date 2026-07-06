@@ -15,9 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
-          submodules: true
           lfs: false
       - name: Build And Deploy
         id: builddeploy
@@ -31,6 +30,7 @@ jobs:
           app_location: "./app" # App source code path
           api_location: "api" # Api source code path - optional
           output_location: "." # Built app content directory - optional
+          skip_app_build: true # ren HTML/JS — inget att bygga (api byggs ändå)
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:

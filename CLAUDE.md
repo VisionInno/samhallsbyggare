@@ -54,7 +54,8 @@ Ingen byggprocess. Inga npm-beroenden i frontend (Leaflet/MapLibre läses från 
 ## Arkitekturprincip (viktig!)
 
 Varje datakälla är en **adapter** definierad i `app/assets/js/config.js`. Frontenden vet inte
-om en källa hämtas direkt eller via proxyn — den anropar `fetchViaProxyIfNeeded()`.
+om en källa hämtas direkt eller via proxyn — den anropar `C.smartFetch()`, som slår in URL:en
+i proxyn via `viaProxy()` om värden finns i `PROXY_HOSTS` (config.js).
 Så kan Lantmäteriet (kräver konto) kopplas in i fas 2 utan att bygga om något.
 
 **CORS-läget styr allt** (verifierat i webbläsare 2026-07-06):
@@ -62,10 +63,13 @@ Så kan Lantmäteriet (kräver konto) kopplas in i fas 2 utan att bygga om någo
 | Källa | Tiles (WMS-bilder) | Datafrågor (JSON/XML) |
 |---|---|---|
 | Nominatim, Overpass, MSB, SCB, RAÄ, OpenFreeMap | direkt | direkt (CORS OK) |
-| SGU, SMHI, Naturvårdsverket, Länsstyrelsen | direkt (`<img>` via Leaflet, CORS krävs ej) | via `/api/geo`-proxyn (saknar CORS) |
+| SGU **maps3.sgu.se** (GetFeatureInfo) | — | **direkt (har CORS!)** — ingår medvetet inte i proxyn |
+| SGU resource.sgu.se, SMHI, Naturvårdsverket, Länsstyrelsen | direkt (`<img>` via Leaflet, CORS krävs ej) | via `/api/geo`-proxyn (saknar CORS) |
 
-Proxyn har en **hård allowlist** av värdnamn i `api/src/functions/geo.js`. Lägg aldrig till
-värdar slentrianmässigt. Inga nycklar, inga hemligheter — den vidarebefordrar bara GET.
+Proxyn har en **hård allowlist** av värdnamn i `api/src/functions/geo.js` — håll den i synk
+med `PROXY_HOSTS` i config.js (två listor, en kommentar i vardera pekar på den andra).
+Lägg aldrig till värdar slentrianmässigt. Inga nycklar, inga hemligheter — den vidarebefordrar
+bara GET, vägrar redirects, kräver rätt Origin/Referer och tvättar Content-Type.
 
 ## Verifierade endpoints (2026-07-06)
 
@@ -98,7 +102,10 @@ värdar slentrianmässigt. Inga nycklar, inga hemligheter — den vidarebefordra
 
 ## Backlog (fas 2-idéer)
 
-1. Lantmäteriet via Geotorget-konto (fastighetsgränser, ortofoto) — adapter finns förberedd
+1. Lantmäteriet via Geotorget-konto (fastighetsgränser, ortofoto) — adapter finns förberedd.
+   **Designkrav:** egen funktion `/api/lm/...` med nyckel i SWA application settings och snäva
+   routes — lägg ALDRIG LM-värdar i den generiska `/api/geo?u=`-proxyn (då kan vem som helst
+   göra LM-anrop på vår nyckel)
 2. K-samsök-API för rikare kulturmiljödata
 3. Gångtidsisokroner (egen Valhalla/OSRM) i stället för fågelvägsringar
 4. PDF-export av platsrapporten (nu: webbläsarens utskrift, print-CSS finns)

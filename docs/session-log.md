@@ -30,6 +30,45 @@
 - MSB-sektionen: Promise.all → allSettled så att en långsam kusttjänst inte blockerar
 - SMHI verifierad live: 19 °C, vind, molnighet ✓. RAÄ verifierad: Stadslager-träff i Sthlm ✓
 
+## 2026-07-06 — Pass 3 (Claude Code): trippelgranskning (säkerhet/UX/arkitektur) + åtgärder
+
+Tre parallella granskningsagenter kördes. Inga kritiska/höga säkerhetsfynd. Åtgärdat i detta pass:
+
+### Säkerhet (geo.js-proxyn härdad + frontend)
+- `redirect: "error"` (en redirect kunde annars lämna allowlisten — SSRF)
+- Content-Type-allowlist: bara json/xml/ogc/bild släpps igenom, annat blir text/plain (stoppar reflekterad XSS på egen origin) + nosniff på funktionssvar
+- Origin/Referer-kontroll: bara sajtens egna origins får använda proxyn (öppen relä stängd); ACAO * borttagen
+- Storleksgräns kontrolleras nu FÖRE/UNDER nedladdning (Content-Length + strömmande läsning), inte efter
+- Portkontroll (endast 443), maps3.sgu.se borttagen ur allowlisten (har CORS, går direkt — listorna hade divergerat)
+- SRI (integrity-hashar) på alla fem unpkg-CDN-taggarna
+- `esc()` escapar nu även citattecken (attributinjektion-fälla)
+- Permissions-Policy-header tillagd
+
+### Arkitektur
+- Race-fix: varje rapportkörning har egen AbortController — gamla anrop avbryts på nätet
+  när användaren väljer ny punkt (skyddar Nominatim/Overpass-policy). smartFetch tar yttre signal.
+- CI: checkout@v4, submodules borttagen, skip_app_build (ren statisk app)
+- CLAUDE.md rättad: CORS-tabellen (maps3 går direkt), funktionsnamn, LM-fas2-designkrav
+- KVARSTÅENDE SKULD (nästa pass): dela analys.js (520 rader) i lib/geoclients + sektioner + rapport;
+  adapterkontrakt + datamodell (JSON före HTML) är förutsättning för fas 2 (PDF/spara/jämför)
+
+### UX (topprioriterade fynden)
+- Mobil: lagerpanelen har stängknapp; kartklick med öppen panel stänger BARA panelen
+  (startade tidigare oavsiktligt en rapport); Lager-knappen ligger nu över panelen (z-index)
+- Enter i sökrutan söker direkt (väntade förut på debounce eller valde inaktuell träff); min 2 tecken
+- Kontrast: --muted/--warn/--ok/primärknapp mörkade till WCAG AA
+- Skärmläsare: aria-label på sök/stäng/reglage, aria-live på riskchips och sökresultat,
+  fokus till rapportrubriken (nu h2) när rapporten öppnas, Escape stänger, emoji aria-hidden
+- "Min position": knappen visar "Hämtar position …", tydligare felmeddelanden
+- Faktafel: "15+ kartlager" → 13; datakällssidans SMHI-exempel bytt pmp3g → snow1g (pmp3g nedlagd)
+- prefers-reduced-motion respekteras; touchytor förstorade; h1-hierarki på undersidorna
+
+### Testnoteringar
+- Verifierat i Chrome (localhost): rapport, race-test (2 snabba punkter → inga fel, rätt rapport),
+  Enter-sök, SRI-hashar (inga integrity-fel), snow1g-exempel-URL:en ger 200
+- VIKTIGT för framtida felsökning: en DOLD Chrome-flik ritar ALDRIG GL-baskartan
+  (rAF pausas → canvas blank i skärmdumpar). document.hidden===true ⇒ testartefakt, inte bugg.
+
 ## 2026-07-06 — Pass 2 (Claude Code): kust-fix + dokumentcommit
 
 ### Klart
@@ -45,7 +84,7 @@
 - Port 3060 registrerad för samhällsbyggare i ~/.claude/profile.md (lokal testserver)
 
 ### Kvar att göra (nästa pass)
-- [ ] **Subdomän:** lägg CNAME `samhallsbyggare` → `purple-bush-015972603.7.azurestaticapps.net`
+- [ ] **Subdomän (PÅMINN Mattias vid nästa sessionsstart):** lägg CNAME `samhallsbyggare` → `purple-bush-015972603.7.azurestaticapps.net`
       hos DNS-leverantören (namnservrar: ns1/ns2.dnshost.net) och lägg sedan till custom domain
       `samhallsbyggare.projektledarpodden.se` i Azure-portalen (SWA `samhallsbyggare` → Custom domains)
       — kräver Mattias inloggning hos DNS-leverantören
