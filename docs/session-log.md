@@ -30,6 +30,22 @@
 - MSB-sektionen: Promise.all → allSettled så att en långsam kusttjänst inte blockerar
 - SMHI verifierad live: 19 °C, vind, molnighet ✓. RAÄ verifierad: Stadslager-träff i Sthlm ✓
 
+## 2026-07-06 — Pass 4 (Claude Code): moduluppdelning av analys.js + actions-låsning
+
+- **analys.js (539 rader) uppdelad i fyra moduler** enligt 200-radersprincipen (arkitektur-
+  granskningens F2, förberedelse för fas 2). Ingen logik ändrad — bara flyttad:
+  - `lib/geoclients.js` (73 rader) — rena protokollklienter (WMS GFI, ArcGIS identify/query),
+    ingen DOM, tar AbortSignal som parameter → återanvändbara för Lantmäteriet-adaptern
+  - `sektioner-plats.js` (167) — väder/översvämning/geologi/miljö
+  - `sektioner-samhalle.js` (157) — adress/kultur/befolkning/service
+  - `rapport.js` (162) — huvudflöde, riskchips, sök, knappar; exporterar `window.ANALYS`
+    (samma namn → karta.js orörd). Sektionerna får ui-hjälpare via fabriksfunktioner.
+- Piltangentsnavigering i sökrutans träfflista (UX H4-resten): pil ner/upp + Escape
+- GitHub Actions SHA-låsta (checkout@34e11487…, static-web-apps-deploy@1a947af9…)
+- EBH-servern testad igen: fortfarande nere (tredje kontrollen idag)
+- Verifierat i Chrome: alla globals laddar, race-test (2 snabba punkter), full rapport,
+  Enter-sök + piltangenter. Inga konsolfel.
+
 ## 2026-07-06 — Pass 3 (Claude Code): trippelgranskning (säkerhet/UX/arkitektur) + åtgärder
 
 Tre parallella granskningsagenter kördes. Inga kritiska/höga säkerhetsfynd. Åtgärdat i detta pass:

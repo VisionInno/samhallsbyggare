@@ -31,7 +31,10 @@ app/                    Statisk webbplats (ingen byggprocess — ren HTML/CSS/JS
   assets/css/style.css  All CSS (designsystem i :root-variabler)
   assets/js/config.js   ALLA datakällor & lagerdefinitioner (ändra här först!)
   assets/js/karta.js    Kartan, lagerpanel, legender
-  assets/js/analys.js   Platsanalysen + rapportpanelen
+  assets/js/lib/geoclients.js       Rena protokollklienter (WMS GFI, ArcGIS) — ingen DOM
+  assets/js/sektioner-plats.js      Rapportsektioner: väder/översvämning/geologi/miljö
+  assets/js/sektioner-samhalle.js   Rapportsektioner: adress/kultur/befolkning/service
+  assets/js/rapport.js  Rapportens huvudflöde, riskchips, sökrutan (exporterar window.ANALYS)
   staticwebapp.config.json  Azure-headers m.m.
 api/                    Azure Functions (managed) — en enda liten CORS-proxy
   src/functions/geo.js  GET /api/geo?u=<url> — vidarebefordrar till godkända värdar
