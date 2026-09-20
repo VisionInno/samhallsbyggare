@@ -54,10 +54,10 @@ window.CFG = (function () {
   };
 
   // ---------- WMS-tjänster ----------
-  const MSB_KART_WMS = "https://gisapp.msb.se/arcgis/services/Oversvamningskarteringar/karteringar/MapServer/WmsServer";
-  const MSB_KUST_WMS = "https://gisapp.msb.se/arcgis/services/Oversvamningskarteringar/kustoversvamning/MapServer/WmsServer";
-  const MSB_KART_REST = "https://gisapp.msb.se/arcgis/rest/services/Oversvamningskarteringar/karteringar/MapServer";
-  const MSB_KUST_REST = "https://gisapp.msb.se/arcgis/rest/services/Oversvamningskarteringar/kustoversvamning/MapServer";
+  const MSB_KART_WMS = "https://gis-tjanster.mcf.se/arcgis/services/Oversvamningskarteringar/karteringar/MapServer/WmsServer";
+  const MSB_KUST_WMS = "https://gis-tjanster.mcf.se/arcgis/services/Oversvamningskarteringar/kustoversvamning/MapServer/WmsServer";
+  const MSB_KART_REST = "https://gis-tjanster.mcf.se/arcgis/rest/services/Oversvamningskarteringar/karteringar/MapServer";
+  const MSB_KUST_REST = "https://gis-tjanster.mcf.se/arcgis/rest/services/Oversvamningskarteringar/kustoversvamning/MapServer";
 
   const SGU_WMS = {
     jordarter: "https://resource.sgu.se/service/wms/130/jordarter-25-100-tusen",

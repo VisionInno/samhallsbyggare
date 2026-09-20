@@ -19,8 +19,8 @@ jordarter/berggrund/brunnar (SGU), fornlämningar (RAÄ), skyddad natur (NVV), f
 - **Hosting:** Azure Static Web App `samhallsbyggare` i resursgrupp `samhallsbyggare-rg` (Free,
   functions i West Europe). Push till `main` → GitHub Actions bygger och deployar automatiskt.
 - **Live-URL (default):** https://purple-bush-015972603.7.azurestaticapps.net
-- **DNS:** projektledarpodden.se ligger hos Cloudflare. Subdomänen kräver CNAME `samhallsbyggare` →
-  default-värden ovan (DNS only) och därefter `az staticwebapp hostname set` — se PLAN.md.
+- **Publik URL (live sedan 2026-09-20):** https://samhallsbyggare.projektledarpodden.se — CNAME (DNS only)
+  i Cloudflare-zonen projektledarpodden.se → default-värden ovan; custom domain registrerad på SWA:n.
 - **Publik testperiod t.o.m. 2026-09-24.** `.github/workflows/stang-av-2026-09-24.yml` deployar då
   mappen `stangd/` (stängt-sida, inget API). Ordinarie deploy har en datumspärr från 2026-09-25 —
   ta bort steget "Datumspärr" i workflow-filen för att öppna sajten igen. Free-nivån kostar 0 kr oavsett.
@@ -83,7 +83,8 @@ bara GET, vägrar redirects, kräver rätt Origin/Referer och tvättar Content-T
 
 ## Verifierade endpoints (2026-07-06)
 
-- MSB översvämning (ArcGIS): `https://gisapp.msb.se/arcgis/rest/services/Oversvamningskarteringar/{karteringar|kustoversvamning|hotkartor}/MapServer` — WMS: samma bas + `/WmsServer`. Karteringar-lager: 2=100-år, 3=100-år klimat, 4=200-år klimat, 5=BHF, 15=1000-år. Kust: lager-id = nivå i dm − 1 (0=0,1 m … 29=3,0 m). **OBS: kusttjänstens `/identify` tar ~30 s (timar ut) — använd lagrets `/{id}/query?returnCountOnly=true` i stället (~1 s), se `arcgisQueryHit()` i analys.js. Karteringar-tjänstens identify är snabb.**
+- **MSB flyttade tjänsten 2026 (gisapp.msb.se → gis-tjanster.mcf.se, 301). Gamla värden bryter CORS-anrop — använd nya.**
+- MSB översvämning (ArcGIS): `https://gis-tjanster.mcf.se/arcgis/rest/services/Oversvamningskarteringar/{karteringar|kustoversvamning|hotkartor}/MapServer` — WMS: samma bas + `/WmsServer`. Karteringar-lager: 2=100-år, 3=100-år klimat, 4=200-år klimat, 5=BHF, 15=1000-år. Kust: lager-id = nivå i dm − 1 (0=0,1 m … 29=3,0 m). **OBS: kusttjänstens `/identify` tar ~30 s (timar ut) — använd lagrets `/{id}/query?returnCountOnly=true` i stället (~1 s), se `arcgisQueryHit()` i analys.js. Karteringar-tjänstens identify är snabb.**
 - SGU punktfrågor (GetFeatureInfo, JSON): `https://maps3.sgu.se/geoserver/wms` — lager
   `jord:SE.GOV.SGU.JORD.GRUNDLAGER.25K`, `jord:SE.GOV.SGU.JORD.GRUNDLAGER.GENOMSLAPPLIGHET.25K`,
   `berg:SE.GOV.SGU.BERG.GEOLOGISK_ENHET.YTA.50K`, `grundvatten:SE.GOV.SGU.BRUNNAR.250K`.

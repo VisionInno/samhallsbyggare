@@ -145,3 +145,20 @@ Tre parallella granskningsagenter kördes. Inga kritiska/höga säkerhetsfynd. �
 - [ ] Efter 24/9: kontrollera att avstängningsjobbet gick igenom
 - [ ] Verifiera EBH-lagret när Länsstyrelsens server svarar
 - [ ] Bygg testsvit (Playwright) enligt hubbens regler
+
+## 2026-09-20 — Pass 7 (Claude Code): subdomänen live
+
+### Klart
+- Mattias loggade in i Cloudflare; Claude lade CNAME `samhallsbyggare` → `purple-bush-015972603.7.azurestaticapps.net`
+  (DNS only) via Chrome. `az staticwebapp hostname set` → status **Ready**, certifikat utfärdat inom ~1 min.
+- Verifierat: https://samhallsbyggare.projektledarpodden.se/ → 200, /verktyg/ → 200, /api/geo (SMHI via proxy) → 200.
+  I Chrome: sök "Skeppsbron 1, Stockholm" → platsrapport med väder, fornlämningar (1 nära), skyddad natur.
+  MSB:s översvämningstjänst svarade inte vid testet (extern störning, hanteras tolerant i UI:t).
+- PLAN.md, pptx-dokumentation och minnesanteckningar uppdaterade; DNS-påminnelsen borttagen.
+
+### Kvar att göra
+- [ ] Efter 24/9: kontrollera att avstängningsjobbet gick igenom
+- [ ] MSB-tjänsten + EBH-lagret: kontrollera när de svarar igen
+- [ ] Testsvit (Playwright)
+- **Fix MSB:** gisapp.msb.se svarar numera 301 → gis-tjanster.mcf.se (nya värden har CORS). Bytt värd i
+  config.js (v10), datakallor/index.html och CLAUDE.md. Verifierat: REST, kust-query och WMS svarar 200.
