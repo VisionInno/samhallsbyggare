@@ -18,6 +18,12 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           lfs: false
+      - name: Datumspärr – sajten är avstängd från 2026-09-25
+        run: |
+          if [ "$(date -u +%Y%m%d)" -ge 20260925 ]; then
+            echo "::error::Sajten stängdes 2026-09-24 (se .github/workflows/stang-av-2026-09-24.yml). Ta bort det här steget för att öppna igen."
+            exit 1
+          fi
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9 # v1

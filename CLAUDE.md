@@ -19,6 +19,11 @@ jordarter/berggrund/brunnar (SGU), fornlämningar (RAÄ), skyddad natur (NVV), f
 - **Hosting:** Azure Static Web App `samhallsbyggare` i resursgrupp `samhallsbyggare-rg` (Free,
   functions i West Europe). Push till `main` → GitHub Actions bygger och deployar automatiskt.
 - **Live-URL (default):** https://purple-bush-015972603.7.azurestaticapps.net
+- **DNS:** projektledarpodden.se ligger hos Cloudflare. Subdomänen kräver CNAME `samhallsbyggare` →
+  default-värden ovan (DNS only) och därefter `az staticwebapp hostname set` — se PLAN.md.
+- **Publik testperiod t.o.m. 2026-09-24.** `.github/workflows/stang-av-2026-09-24.yml` deployar då
+  mappen `stangd/` (stängt-sida, inget API). Ordinarie deploy har en datumspärr från 2026-09-25 —
+  ta bort steget "Datumspärr" i workflow-filen för att öppna sajten igen. Free-nivån kostar 0 kr oavsett.
 
 ## Struktur
 

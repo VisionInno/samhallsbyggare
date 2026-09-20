@@ -118,3 +118,30 @@ Tre parallella granskningsagenter kördes. Inga kritiska/höga säkerhetsfynd. �
       i projektledarpodden-repots staticwebapp.config.json
 - [ ] Verifiera EBH-lagret när Länsstyrelsens server svarar igen (fortfarande nere 2026-07-06 em)
 - [ ] Idé: byt Nominatim-sök till egen instans vid skarp trafik (policy 1 req/s)
+
+## 2026-09-20 — Pass 6 (Claude Code): publicering på subdomän, auto-avstängning 24/9, QR-kod
+
+### Klart
+- **Subdomän:** DNS för projektledarpodden.se ligger numera hos **Cloudflare** (inte dnshost som tidigare
+  anteckningar sa). Cloudflare kräver Mattias inloggning → CNAME-steget lämnat till honom i PLAN.md.
+  `az staticwebapp hostname set` provades men Azure vägrar tills CNAME finns ("CNAME Record is invalid").
+- **Auto-avstängning:** ny workflow `.github/workflows/stang-av-2026-09-24.yml` (cron 24 sep 20:00 UTC,
+  årskontroll 2026, kan även köras manuellt med bekräftelseordet STANG). Den deployar mappen `stangd/`
+  (en fristående stängt-sida + egen staticwebapp.config.json) **utan API** → funktionen försvinner.
+  Ordinarie deploy-workflow fick en datumspärr som stoppar pushar från 2026-09-25 så sajten inte
+  öppnas igen av misstag. Notering: Free-nivån kostar 0 kr oavsett — avstängningen är ändå gjord enligt önskemål.
+- **QR-kod:** `docs/qr-samhallsbyggare.png` (1200 px) + `.svg`, genererad med npm-paketet `qrcode`,
+  pekar på https://samhallsbyggare.projektledarpodden.se.
+- Dokumentation uppdaterad: CLAUDE.md, README.md, PLAN.md (ny), samhallsbyggare-dokumentation.pptx,
+  00-Projektoversikt.pptx. Tidigare ocommittade pptx-filer (guide + projektdokumentation) committade.
+
+### Tester
+- YAML-validering av båda workflow-filerna (js-yaml): OK
+- Stängt-sidan serverad lokalt (port 3061): HTTP 200, visuellt kontrollerad i Chrome (ljust + mörkt läge)
+- Ingen automatisk testsvit finns ännu i repot (`tests/` saknas) — noterat i PLAN.md
+
+### Kvar att göra (nästa pass)
+- [ ] Mattias: CNAME i Cloudflare (DNS only) → Claude: `az staticwebapp hostname set` + verifiering i Chrome
+- [ ] Efter 24/9: kontrollera att avstängningsjobbet gick igenom
+- [ ] Verifiera EBH-lagret när Länsstyrelsens server svarar
+- [ ] Bygg testsvit (Playwright) enligt hubbens regler

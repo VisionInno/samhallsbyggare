@@ -11,6 +11,9 @@ långt man kommer med öppna data och AI-assisterad utveckling.
 
 🌐 **Live:** https://samhallsbyggare.projektledarpodden.se
 
+> **Publik testperiod till och med 24 september 2026.** Därefter ersätts sajten automatiskt av en
+> stängt-sida. Källkoden finns kvar här — kör lokalt enligt nedan. QR-kod till sajten: `docs/qr-samhallsbyggare.png`.
+
 ## Datakällor (alla öppna, ingen registrering)
 
 | Källa | Data | Licens |
