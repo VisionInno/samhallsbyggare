@@ -44,6 +44,8 @@ app/                    Statisk webbplats (ingen byggprocess — ren HTML/CSS/JS
 api/                    Azure Functions (managed) — en enda liten CORS-proxy
   src/functions/geo.js  GET /api/geo?u=<url> — vidarebefordrar till godkända värdar
 docs/                   Arkitektur & sessionslogg
+stangd/                  Stängt-sidan som deployas automatiskt 2026-09-24 (fristående, inget API)
+PLAN.md                 Nästa steg för Claude / att göra för Mattias
 ```
 
 ## Kommandon
