@@ -7,3 +7,7 @@ Thumbs.db
 api/local.settings.json
 .vscode/
 dist/
+
+*.env
+
+local.settings.json
